@@ -1,10 +1,11 @@
 from flask.ext.script import Manager
 from flask.ext.migrate import Migrate, MigrateCommand
-import os
-from app import app, db
-from app.models import Task, Question, Hint
 
-app.config.from_object(os.environ['APP_SETTINGS'])
+from app.app import create_app
+from app.extensions import db
+from app.models import Hint, Question, Task
+
+app = create_app()
 
 migrate = Migrate(app, db)
 manager = Manager(app)

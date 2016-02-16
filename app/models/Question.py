@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, ForeignKey, String, Boolean, Float
 from sqlalchemy.dialects.postgresql import ENUM
 from sqlalchemy.orm import relationship
 
-from app import db
+from app.extensions import db
 
 
 class Question(db.Model):
