@@ -15,7 +15,7 @@ class Task(db.Model):
     identifier = Column(String)
     name = Column(String)
 
-    task_runs = relationship("taskRun")
+    task_runs = relationship("TaskRun")
 
 
 class TaskRun(db.Model):
@@ -25,10 +25,6 @@ class TaskRun(db.Model):
     user_id = Column(Integer, ForeignKey("user.id"))
     date = Column(DateTime)
 
-    task = relationship("task")
+    task = relationship("Task")
 
 
-#db.session.add_all([
-#    Game(name='Mass - Imperial', identifier='mass_i')
-#])
-#db.session.commit()

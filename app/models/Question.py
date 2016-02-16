@@ -27,7 +27,7 @@ class CloseEndedQuestion(Question):
     question_cz = Column(String)
     question_en = Column(String)
 
-    answers = relationship('question_closeEnded_answer')
+    answers = relationship('CloseEndedAnswer')
 
     __mapper_args__ = {'polymorphic_identity': 'questionCloseEnded'}
 
@@ -42,7 +42,7 @@ class CloseEndedAnswer(db.Model):
     explanation_cz = Column(String)
     correct = Column(Boolean)
 
-    question = relationship('question_closeEnded')
+    question = relationship('CloseEndedQuestion')
 
 
 # numeric
@@ -90,7 +90,7 @@ class SortQuestion(Question):
     bottom_desc_en = Column(String)
     bottom_desc_cz = Column(String)
 
-    answers = relationship('question_closeEnded_answer')
+    answers = relationship('SortAnswer')
 
     __mapper_args__ = {'polymorphic_identity': 'questionSort'}
 
@@ -106,4 +106,4 @@ class SortAnswer(db.Model):
     explanation_en = Column(String)
     explanation_cz = Column(String)
 
-    question = relationship('question_closeEnded')
+    question = relationship('SortQuestion')
