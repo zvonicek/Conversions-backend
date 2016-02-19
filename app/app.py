@@ -27,6 +27,7 @@ def create_app(config=os.environ['APP_SETTINGS'], app_name='Math', blueprints=No
     app = Flask(app_name)
     configure_app(app, config)
     configure_blueprints(app, blueprints)
+    configure_extensions(app)
 
     return app
 
