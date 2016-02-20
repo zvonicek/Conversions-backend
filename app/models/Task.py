@@ -27,7 +27,7 @@ class TaskRun(db.Model):
 
     task = relationship("Task")
     user = relationship("User")
-    questions = relationship("TaskRunQuestion", back_populates="taskrun")
+    questions = relationship("TaskRunQuestion", back_populates="taskrun", order_by="TaskRunQuestion.position")
 
 
 class TaskRunQuestion(db.Model):

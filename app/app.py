@@ -2,8 +2,9 @@ import os
 
 from flask import Flask, request, render_template
 
+from app import extensions
 from .api import api
-from .extensions import db
+from .extensions import db, cache
 from .config import DevelopmentConfig
 
 # For import *
@@ -14,7 +15,7 @@ DEFAULT_BLUEPRINTS = (
 )
 
 
-def create_app(config=os.environ['APP_SETTINGS'], app_name='Math', blueprints=None):
+def create_app(config, app_name='Math', blueprints=None):
     """Create a Flask app.
     :param blueprints:
     :param app_name:
@@ -32,13 +33,15 @@ def create_app(config=os.environ['APP_SETTINGS'], app_name='Math', blueprints=No
     return app
 
 
-def configure_app(app, config=None):
+def configure_app(app, cfg=None):
     """Different ways of configurations.
     :param app: app instance
     :param config: app configuration
     """
 
-    if config:
+    if cfg:
+        app.config.from_object(cfg)
+    else:
         app.config.from_object(DevelopmentConfig)
 
 

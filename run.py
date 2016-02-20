@@ -1,11 +1,13 @@
 from flask.ext.script import Manager
 
 from app.app import create_app
+from app.config import config, Config
+from app.engine.currency import fetch_currency_rates
 from app.extensions import db
 from app.models import *
 from app.models.Task import TaskRunQuestion
 
-app = create_app()
+app = create_app(Config())
 manager = Manager(app)
 
 
@@ -34,9 +36,24 @@ def initdb():
     taskrunquestion2 = TaskRunQuestion(position=0, taskrun=taskrun, question=question2)
     taskrunquestion3 = TaskRunQuestion(position=2, taskrun=taskrun, question=question3)
 
-
     db.session.add_all([user, task, taskrun, question1, taskrunquestion1, taskrunquestion2, taskrunquestion3])
     db.session.commit()
+
+
+@manager.command
+def currency():
+    #  we need to set trigger to fetch_currency_rates
+    exchange_rates = fetch_currency_rates(config)
+
+    for currency, rate in list(exchange_rates.items()):
+        print('1 EUR = {0} {1}'.format(rate, currency))
+
+
+@manager.command
+def convert():
+    from app.engine.convert import convert
+
+    print(convert("czk", 200, "nok"))
 
 
 manager.add_option('-c', '--config',

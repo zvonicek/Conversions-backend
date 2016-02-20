@@ -9,6 +9,11 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+    # currency
+    YAHOO_BASE_URL = 'https://download.finance.yahoo.com/d/quotes.csv?f=sl1&s={0}'
+    REFERENCE_CURRENCY = 'EUR'
+    SYMBOLS_PER_REQUEST = 50
+
 
 class ProductionConfig(Config):
     DEBUG = False
@@ -26,3 +31,5 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     TESTING = True
+
+config = Config()
