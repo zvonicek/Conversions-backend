@@ -1,4 +1,6 @@
 from flask.ext.script import Manager
+from sqlalchemy import MetaData
+from sqlalchemy.sql.ddl import DropConstraint
 
 from app.app import create_app
 from app.config import config, Config
@@ -23,20 +25,44 @@ def initdb():
     """Init/reset database."""
 
     db.init_app(app)
+
+    metadata = MetaData(db.engine)
+    metadata.reflect()
+    for table in metadata.tables.values():
+        for fk in table.foreign_keys:
+            db.engine.execute(DropConstraint(fk.constraint))
     db.drop_all()
     db.create_all()
 
     user = User()
-    task = Task(identifier='mass-metric', name='Mass Metric')
-    taskrun = TaskRun(task=task, user=user)
-    question1 = ScaleQuestion(task_en="asd")
-    question2 = ScaleQuestion(task_en="bcc")
-    question3 = NumericQuestion(imagePath="blabla")
-    taskrunquestion1 = TaskRunQuestion(position=1, taskrun=taskrun, question=question1)
-    taskrunquestion2 = TaskRunQuestion(position=0, taskrun=taskrun, question=question2)
-    taskrunquestion3 = TaskRunQuestion(position=2, taskrun=taskrun, question=question3)
+    task1 = Task(identifier='mass-metric', name='Mass - Metric')
+    task2 = Task(identifier='mass-imperial', name='Mass - Imperial')
+    task3 = Task(identifier='mass-combined', name='Mass - Combined')
+    task4 = Task(identifier='length-metric', name='Length - Metric')
+    task5 = Task(identifier='length-imperial', name='Length - Imperial')
+    task6 = Task(identifier='length-combined', name='Length - Combined')
+    task7 = Task(identifier='area-metric', name='Area - Metric')
+    task8 = Task(identifier='area-imperial', name='Area - Imperial')
+    task9 = Task(identifier='area-combined', name='Area - Combined')
 
-    db.session.add_all([user, task, taskrun, question1, taskrunquestion1, taskrunquestion2, taskrunquestion3])
+#    taskrun = TaskRun(task=task, user=user)
+#    question1 = ScaleQuestion(task_en="asd")
+#    question2 = ScaleQuestion(task_en="bcc")
+#    taskrunquestion1 = TaskRunQuestion(position=1, taskrun=taskrun, question=question1)
+#    taskrunquestion2 = TaskRunQuestion(position=0, taskrun=taskrun, question=question2)
+#    taskrunquestion3 = TaskRunQuestion(position=2, taskrun=taskrun, question=question3)
+#    db.session.add_all([user, task, taskrun, question1, taskrunquestion1, taskrunquestion2, taskrunquestion3])
+
+    db.session.add_all([
+        task1,
+        NumericQuestion(fromValue=5, fromUnit="m", toUnit="cm", tasks=[task1]),
+        NumericQuestion(fromValue=2, fromUnit="km", toUnit="m", tasks=[task1]),
+        NumericQuestion(fromValue=2, fromUnit="km", toUnit="m", tasks=[task1]),
+        NumericQuestion(fromValue=8, fromUnit="m", toUnit="dm", tasks=[task1]),
+        NumericQuestion(fromValue=22, fromUnit="cm", toUnit="mm", tasks=[task1]),
+        NumericQuestion(fromValue=4, fromUnit="dm", toUnit="mm", tasks=[task1]),
+        NumericQuestion(fromValue=5, fromUnit="km", toUnit="dm", tasks=[task1]),
+    ])
     db.session.commit()
 
 

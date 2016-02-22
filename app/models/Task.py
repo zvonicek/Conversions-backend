@@ -2,6 +2,7 @@ from sqlalchemy import Column, Integer, ForeignKey, String, DateTime, Boolean, F
 from sqlalchemy.orm import relationship
 
 from app.extensions import db
+from app.models.Question import question_task_association
 
 
 class User(db.Model):
@@ -16,6 +17,7 @@ class Task(db.Model):
     name = Column(String)
 
     task_runs = relationship("TaskRun")
+    questions = relationship('Question', secondary=question_task_association, back_populates="tasks")
 
 
 class TaskRun(db.Model):

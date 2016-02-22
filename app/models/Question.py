@@ -1,17 +1,24 @@
-from sqlalchemy import Column, Integer, ForeignKey, String, Boolean, Float
+from sqlalchemy import Column, Integer, ForeignKey, String, Boolean, Float, Table
 from sqlalchemy.dialects.postgresql import ENUM
 from sqlalchemy.orm import relationship
 
 from app.extensions import db
 
+question_task_association = Table('question_task_association', db.Model.metadata,
+                                  Column('question_id', Integer, ForeignKey('question.id')),
+                                  Column('task_id', Integer, ForeignKey('task.id')),
+                                  )
+
 
 class Question(db.Model):
     __tablename__ = 'question'
     id = Column(Integer, primary_key=True)
-    time_fast = Column(Integer)
-    time_neutral = Column(Integer)
+    time_fast = Column(Integer, nullable=True)
+    time_neutral = Column(Integer, nullable=True)
     difficulty = Column(ENUM('Easy', 'Medium', 'Hard', name='difficulty'))
     type = Column(String(50))
+
+    tasks = relationship('Task', secondary=question_task_association, back_populates="questions")
 
     __mapper_args__ = {
         'polymorphic_identity': 'question',
@@ -50,12 +57,10 @@ class CloseEndedAnswer(db.Model):
 class NumericQuestion(Question):
     __tablename__ = 'question_numeric'
     id = Column(Integer, ForeignKey('question.id'), primary_key=True)
-    fromVal = Column(Float)
-    toVal = Column(Float)
-    fromUnut = Column(String)
-    toUnit = Column(String)
-    correctTolerance = Column(Float)
-    imagePath = Column(String)
+    fromValue = Column(Integer)  # eg. 10
+    fromUnit = Column(String)  # eg. cm
+    toUnit = Column(String)   # eg. m
+    imagePath = Column(String, nullable=True)
     # doplnit hint
 
     __mapper_args__ = {'polymorphic_identity': 'questionNumeric'}
@@ -66,14 +71,11 @@ class NumericQuestion(Question):
 class ScaleQuestion(Question):
     __tablename__ = "question_scale"
     id = Column(Integer, ForeignKey('question.id'), primary_key=True)
-    task_en = Column(String)
-    task_cz = Column(String)
     scale_min = Column(Float)
     scale_max = Column(Float)
-    correctVal = Column(Float)
-    correctTolerance = Column(Float)
-    fromUnit = Column(String) # to by mel byt FK
-    toUnit = Column(String)
+    fromValue = Column(Integer)  # eg. 10
+    fromUnit = Column(String)  # eg. cm
+    toUnit = Column(String)   # eg. m
 
     __mapper_args__ = {'polymorphic_identity': 'questionScale'}
 
@@ -83,12 +85,8 @@ class ScaleQuestion(Question):
 class SortQuestion(Question):
     __tablename__ = 'question_sort'
     id = Column(Integer, ForeignKey('question.id'), primary_key=True)
-    question_en = Column(String)
-    question_cz = Column(String)
-    top_desc_en = Column(String)
-    top_desc_cz = Column(String)
-    bottom_desc_en = Column(String)
-    bottom_desc_cz = Column(String)
+    quantity = Column(String)  # length, weight, ...
+    order = Column(ENUM('Asc', 'Desc', name='order'))
 
     answers = relationship('SortAnswer')
 
@@ -99,11 +97,9 @@ class SortAnswer(db.Model):
     __tablename__ = 'answer_sort'
     id = Column(Integer, primary_key=True)
     task_id = Column(Integer, ForeignKey("question_sort.id"))
-    answer_en = Column(String)
-    answer_cz = Column(String)
-    correct_pos = Column(Integer)
+    value = Column(Integer)  # eg. 10
+    unit = Column(String) # eg. cm
+    #correct_pos = Column(Integer)
     presnted_pos = Column(Integer)
-    explanation_en = Column(String)
-    explanation_cz = Column(String)
 
     question = relationship('SortQuestion')
