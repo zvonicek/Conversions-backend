@@ -1,5 +1,6 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, abort
 
+from app.engine.generator import generate_game
 from app.models import User, Task, TaskRun
 from app.schemas.Task import task_schema, tasks_schema, taskrun_schema
 
@@ -18,9 +19,17 @@ def home():
 
 
 # param user
-@api.route("/getTaskRun", methods=['GET'])
-def get_task_run():
-    return "ahoj"
+@api.route("/start/<task_name>/<user_id>", methods=['GET'])
+def start(task_name, user_id):
+    user = User.query.get(user_id)
+    task = Task.query.filter_by(identifier=task_name).first()
+
+    if user is None or task is None:
+        abort(404)
+
+    taskrun = generate_game(task, user)
+    schema = taskrun_schema.dump(taskrun)
+    return jsonify(schema.data)
 
 
 # param id

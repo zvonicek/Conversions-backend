@@ -9,11 +9,16 @@ class QuestionSchema(Schema):
 
 
 class NumericQuestionSchema(QuestionSchema):
+    fromValue = fields.Integer()
+    fromUnit = fields.String()
+    toUnit = fields.String()
     imagePath = fields.String()
 
-
 class ScaleQuestionSchema(QuestionSchema):
-    task_en = fields.String()
+    fromValue = fields.Integer()
+    fromUnit = fields.String()
+    toUnit = fields.String()
+    imagePath = fields.String()
 
 
 def question_schema_serialization_disambiguation(base_object, _):

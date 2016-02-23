@@ -9,7 +9,7 @@ from app.extensions import db
 from app.models import *
 from app.models.Task import TaskRunQuestion
 
-app = create_app(Config())
+app = create_app(config)
 manager = Manager(app)
 
 
@@ -54,6 +54,7 @@ def initdb():
 #    db.session.add_all([user, task, taskrun, question1, taskrunquestion1, taskrunquestion2, taskrunquestion3])
 
     db.session.add_all([
+        user,
         task1,
         NumericQuestion(fromValue=5, fromUnit="m", toUnit="cm", tasks=[task1]),
         NumericQuestion(fromValue=2, fromUnit="km", toUnit="m", tasks=[task1]),
