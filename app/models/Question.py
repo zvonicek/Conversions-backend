@@ -57,10 +57,10 @@ class CloseEndedAnswer(db.Model):
 class NumericQuestion(Question):
     __tablename__ = 'question_numeric'
     id = Column(Integer, ForeignKey('question.id'), primary_key=True)
-    fromValue = Column(Integer)  # eg. 10
-    fromUnit = Column(String)  # eg. cm
-    toUnit = Column(String)   # eg. m
-    imagePath = Column(String, nullable=True)
+    from_value = Column(Integer)  # eg. 10
+    from_unit = Column(String)  # eg. cm
+    to_unit = Column(String)   # eg. m
+    image_path = Column(String, nullable=True)
     # doplnit hint
 
     __mapper_args__ = {'polymorphic_identity': 'questionNumeric'}
@@ -73,9 +73,9 @@ class ScaleQuestion(Question):
     id = Column(Integer, ForeignKey('question.id'), primary_key=True)
     scale_min = Column(Float)
     scale_max = Column(Float)
-    fromValue = Column(Integer)  # eg. 10
-    fromUnit = Column(String)  # eg. cm
-    toUnit = Column(String)   # eg. m
+    from_value = Column(Integer)  # eg. 10
+    from_unit = Column(String)  # eg. cm
+    to_unit = Column(String)   # eg. m
 
     __mapper_args__ = {'polymorphic_identity': 'questionScale'}
 

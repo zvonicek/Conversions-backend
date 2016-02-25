@@ -56,13 +56,13 @@ def initdb():
     db.session.add_all([
         user,
         task1,
-        NumericQuestion(fromValue=5, fromUnit="m", toUnit="cm", tasks=[task1]),
-        NumericQuestion(fromValue=2, fromUnit="km", toUnit="m", tasks=[task1]),
-        NumericQuestion(fromValue=2, fromUnit="km", toUnit="m", tasks=[task1]),
-        NumericQuestion(fromValue=8, fromUnit="m", toUnit="dm", tasks=[task1]),
-        NumericQuestion(fromValue=22, fromUnit="cm", toUnit="mm", tasks=[task1]),
-        NumericQuestion(fromValue=4, fromUnit="dm", toUnit="mm", tasks=[task1]),
-        NumericQuestion(fromValue=5, fromUnit="km", toUnit="dm", tasks=[task1]),
+        NumericQuestion(from_value=5, from_unit="m", to_unit="cm", tasks=[task1]),
+        NumericQuestion(from_value=2, from_unit="km", to_unit="m", tasks=[task1]),
+        NumericQuestion(from_value=8, from_unit="m", to_unit="dm", tasks=[task1]),
+        NumericQuestion(from_value=22, from_unit="cm", to_unit="mm", tasks=[task1]),
+        NumericQuestion(from_value=4, from_unit="dm", to_unit="mm", tasks=[task1]),
+        NumericQuestion(from_value=5, from_unit="km", to_unit="dm", tasks=[task1]),
+        ScaleQuestion()
     ])
     db.session.commit()
 

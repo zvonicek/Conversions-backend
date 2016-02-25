@@ -1,3 +1,4 @@
+from app.extensions import db
 from app.models import TaskRun, Question
 from app.models.Task import TaskRunQuestion
 
@@ -14,6 +15,8 @@ def generate_game(task, user):
     """
 
     taskrun = TaskRun(task=task, user=user, questions=choose_questions(task, user, 5))
+    db.session.add(taskrun)
+    db.session.commit()
     return taskrun
 
 

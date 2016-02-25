@@ -14,6 +14,10 @@ class Config(object):
     REFERENCE_CURRENCY = 'EUR'
     SYMBOLS_PER_REQUEST = 50
 
+    # question generation
+    QUESTIONS_PER_RUN = 10
+    TOLERANCE = "?"
+
 
 class ProductionConfig(Config):
     DEBUG = False
