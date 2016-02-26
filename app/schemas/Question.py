@@ -1,7 +1,12 @@
 from marshmallow import Schema, fields
 
 from app.models import NumericQuestion, ScaleQuestion
-from app.engine.convert import convert
+from app.engine.convert import convert, format_quantity
+
+
+class UnitField(fields.Field):
+    def _serialize(self, value, attr, obj):
+        return format_quantity(value)
 
 
 class QuestionSchema(Schema):
@@ -11,16 +16,12 @@ class QuestionSchema(Schema):
 
 class NumericQuestionSchema(QuestionSchema):
     fromValue = fields.Float(attribute="from_value")
-    fromUnit = fields.String(attribute="from_unit")
-    toUnit = fields.String(attribute="to_unit")
-    toValue = fields.Method("get_to_value")
+    fromUnit = UnitField(attribute="from_unit")
+    toUnit = UnitField(attribute="to_unit")
+    toValue = fields.Float(attribute="to_value")
     minCorrectValue = fields.Method("get_min_correct_val")
     maxCorrectValue = fields.Method("get_min_correct_val")
     imagePath = fields.String()
-
-    @staticmethod
-    def get_to_value(obj):
-        return convert(obj.from_unit, obj.from_value, obj.to_unit).magnitude
 
     @staticmethod
     def get_min_correct_val(obj):
@@ -33,21 +34,17 @@ class NumericQuestionSchema(QuestionSchema):
 
 class ScaleQuestionSchema(QuestionSchema):
     task = fields.Method("get_task")
-    fromValue = fields.Integer(attribute="from_value")
-    fromUnit = fields.String(attribute="from_unit")
-    toUnit = fields.String(attribute="to_unit")
-    correctValue = fields.Method("get_to_value")
+    fromValue = fields.Float(attribute="from_value")
+    fromUnit = UnitField(attribute="from_unit")
+    toUnit = UnitField(attribute="to_unit")
+    correctValue = fields.Float(attribute="to_value")
     correctTolerance = 42
-    scaleMin = fields.Float(attribute="scale_min")
-    scaleMax = fields.Float(attribute="scale_max")
+    scaleMin = fields.Function(lambda obj: obj.to_value - obj.scale_min)
+    scaleMax = fields.Function(lambda obj: obj.to_value + obj.scale_max)
 
     @staticmethod
     def get_task(obj):
-        pass
-
-    @staticmethod
-    def get_to_value(obj):
-        return convert(obj.from_unit, obj.from_value, obj.to_unit).magnitude
+        return "Convert {:d} {} to {}".format(obj.from_value, format_quantity(obj.from_unit), format_quantity(obj.to_unit))
 
 
 def question_schema_serialization_disambiguation(base_object, _):

@@ -45,7 +45,7 @@ def initdb():
     task8 = Task(identifier='area-imperial', name='Area - Imperial')
     task9 = Task(identifier='area-combined', name='Area - Combined')
 
-#    taskrun = TaskRun(task=task, user=user)
+#    taskrun = TaskRun(task=t-ask, user=user)
 #    question1 = ScaleQuestion(task_en="asd")
 #    question2 = ScaleQuestion(task_en="bcc")
 #    taskrunquestion1 = TaskRunQuestion(position=1, taskrun=taskrun, question=question1)
@@ -62,7 +62,7 @@ def initdb():
         NumericQuestion(from_value=22, from_unit="cm", to_unit="mm", tasks=[task1]),
         NumericQuestion(from_value=4, from_unit="dm", to_unit="mm", tasks=[task1]),
         NumericQuestion(from_value=5, from_unit="km", to_unit="dm", tasks=[task1]),
-        ScaleQuestion()
+        ScaleQuestion(scale_min=20, scale_max=100, from_value=50000, from_unit="m", to_unit="km", tasks=[task1])
     ])
     db.session.commit()
 

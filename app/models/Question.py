@@ -1,7 +1,9 @@
 from sqlalchemy import Column, Integer, ForeignKey, String, Boolean, Float, Table
 from sqlalchemy.dialects.postgresql import ENUM
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
+from app.engine.convert import convert
 from app.extensions import db
 
 question_task_association = Table('question_task_association', db.Model.metadata,
@@ -63,6 +65,10 @@ class NumericQuestion(Question):
     image_path = Column(String, nullable=True)
     # doplnit hint
 
+    @hybrid_property
+    def to_value(self):
+        return convert(self.from_unit, self.from_value, self.to_unit).magnitude
+
     __mapper_args__ = {'polymorphic_identity': 'questionNumeric'}
 
 
@@ -76,6 +82,10 @@ class ScaleQuestion(Question):
     from_value = Column(Integer)  # eg. 10
     from_unit = Column(String)  # eg. cm
     to_unit = Column(String)   # eg. m
+
+    @hybrid_property
+    def to_value(self):
+        return convert(self.from_unit, self.from_value, self.to_unit).magnitude
 
     __mapper_args__ = {'polymorphic_identity': 'questionScale'}
 

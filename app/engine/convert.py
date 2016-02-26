@@ -44,6 +44,19 @@ def convert(quantity_from, value_from, value_to):
     return from_q.to(to_q)
 
 
+def format_quantity(quantity):
+    """
+    Format unit to printable string (eg. "meter")
+    :param quantity:
+    :type quantity:
+    :return:
+    :rtype:
+    """
+    
+    q = ureg.parse_units(quantity)
+    return '{:P}'.format(q)
+
+
 ureg = UnitRegistry()
 rates = currency.get_currency_rates(config)
 register_exchange_rates(rates)
