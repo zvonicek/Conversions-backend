@@ -44,6 +44,11 @@ def convert(quantity_from, value_from, value_to):
     return from_q.to(to_q)
 
 
+def to_normalized(quantity_from, value_from):
+    from_q = ureg.Quantity(value_from, quantity_from)
+    return from_q.to_base_units().magnitude
+
+
 def format_quantity(quantity):
     """
     Format unit to printable string (eg. "meter")
@@ -52,9 +57,14 @@ def format_quantity(quantity):
     :return:
     :rtype:
     """
-    
+
     q = ureg.parse_units(quantity)
     return '{:P}'.format(q)
+
+
+def format_value(quantity_from, value_from):
+    from_q = ureg.Quantity(value_from, quantity_from)
+    return '{:P}'.format(from_q)
 
 
 ureg = UnitRegistry()

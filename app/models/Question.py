@@ -3,8 +3,10 @@ from sqlalchemy.dialects.postgresql import ENUM
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
 
-from app.engine.convert import convert
+from app.engine.convert import convert, to_normalized
 from app.extensions import db
+
+import enum
 
 question_task_association = Table('question_task_association', db.Model.metadata,
                                   Column('question_id', Integer, ForeignKey('question.id')),
@@ -65,7 +67,7 @@ class NumericQuestion(Question):
     image_path = Column(String, nullable=True)
     # doplnit hint
 
-    @hybrid_property
+    @property
     def to_value(self):
         return convert(self.from_unit, self.from_value, self.to_unit).magnitude
 
@@ -92,15 +94,75 @@ class ScaleQuestion(Question):
 
 # sort
 
+class Dimensionality(enum.Enum):
+    length = "length"
+    mass = "mass"
+    area = "area"
+    volume = "volume"
+    currency = "currency"
+
+    @property
+    def min(self):
+        return {
+            Dimensionality.length: "smallest",
+            Dimensionality.mass: "lightest",
+            Dimensionality.area: "smallest",
+            Dimensionality.volume: "smallest",
+            Dimensionality.currency: "cheapest"
+        }[self]
+
+    @property
+    def max(self):
+        return {
+            Dimensionality.length: "largest",
+            Dimensionality.mass: "heaviest",
+            Dimensionality.area: "largest",
+            Dimensionality.volume: "largest",
+            Dimensionality.currency: "most expensive"
+        }[self]
+
+
+class SortOrdering(enum.Enum):
+    asc = 'asc'
+    desc = 'desc'
+
+
 class SortQuestion(Question):
     __tablename__ = 'question_sort'
     id = Column(Integer, ForeignKey('question.id'), primary_key=True)
-    quantity = Column(String)  # length, weight, ...
-    order = Column(ENUM('Asc', 'Desc', name='order'))
+    dimensionality = Column(ENUM('length', 'mass', 'area', 'volume', 'temperature', 'currency', name='e_dimensionality'))
+    order = Column(ENUM('asc', 'desc', name='e_order'))
 
     answers = relationship('SortAnswer')
 
     __mapper_args__ = {'polymorphic_identity': 'questionSort'}
+
+    def sorted_answers(self):
+        answers = sorted(self.answers, key=lambda x: x.normalized_value(), reverse=True)
+        for i in range(0, len(answers)):
+            answers[i].correct_pos = i
+
+        return answers
+
+    @property
+    def min(self):
+        return {
+            "length": "smallest",
+            "mass": "lightest",
+            "area": "smallest",
+            "volume": "smallest",
+            "currency": "cheapest"
+        }[self.dimensionality]
+
+    @property
+    def max(self):
+        return {
+            "length": "largest",
+            "mass": "heaviest",
+            "area": "largest",
+            "volume": "largest",
+            "currency": "most expensive"
+        }[self.dimensionality]
 
 
 class SortAnswer(db.Model):
@@ -109,7 +171,10 @@ class SortAnswer(db.Model):
     task_id = Column(Integer, ForeignKey("question_sort.id"))
     value = Column(Integer)  # eg. 10
     unit = Column(String) # eg. cm
-    #correct_pos = Column(Integer)
-    presnted_pos = Column(Integer)
+    presented_pos = Column(Integer)
+    correct_pos = None
 
     question = relationship('SortQuestion')
+
+    def normalized_value(self):
+        return to_normalized(self.unit, self.value)

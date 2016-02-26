@@ -1,7 +1,7 @@
 from marshmallow import Schema, fields
 
-from app.models import NumericQuestion, ScaleQuestion
-from app.engine.convert import convert, format_quantity
+from app.models import NumericQuestion, ScaleQuestion, SortQuestion
+from app.engine.convert import format_quantity, format_value
 
 
 class UnitField(fields.Field):
@@ -47,10 +47,29 @@ class ScaleQuestionSchema(QuestionSchema):
         return "Convert {:d} {} to {}".format(obj.from_value, format_quantity(obj.from_unit), format_quantity(obj.to_unit))
 
 
+class SortAnswerSchema(QuestionSchema):
+    title = fields.Function(lambda obj: format_value(obj.unit, obj.value))
+    correctPosition = fields.Integer(attribute="correct_pos")
+    presentedPosition = fields.Integer(attribute="presented_pos")
+    errorExplanation = ""  # not critical, maybe implement later
+
+
+class SortQuestionSchema(QuestionSchema):
+    question = fields.Method("get_question")
+    topDescription = fields.Function(lambda obj: obj.min)
+    bottomDescription = fields.Function(lambda obj: obj.max)
+    answers = fields.Nested(SortAnswerSchema, many=True, attribute="sorted_answers")
+
+    @staticmethod
+    def get_question(obj):
+        return "Sort from {} to {}".format(obj.min, obj.max)
+
+
 def question_schema_serialization_disambiguation(base_object, _):
     class_to_schema = {
         NumericQuestion.__name__: NumericQuestionSchema,
-        ScaleQuestion.__name__: ScaleQuestionSchema
+        ScaleQuestion.__name__: ScaleQuestionSchema,
+        SortQuestion.__name__: SortQuestionSchema
     }
     try:
         return class_to_schema[base_object.__class__.__name__]()

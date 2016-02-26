@@ -53,6 +53,13 @@ def initdb():
 #    taskrunquestion3 = TaskRunQuestion(position=2, taskrun=taskrun, question=question3)
 #    db.session.add_all([user, task, taskrun, question1, taskrunquestion1, taskrunquestion2, taskrunquestion3])
 
+    sortA1 = SortAnswer(value="100", unit="cm", presented_pos=0)
+    sortA2 = SortAnswer(value="200", unit="dm", presented_pos=1)
+    sortA3 = SortAnswer(value="2", unit="m", presented_pos=2)
+    sortA4 = SortAnswer(value="3500", unit="mm", presented_pos=3)
+    sortA5 = SortAnswer(value="9", unit="dm", presented_pos=4)
+
+
     db.session.add_all([
         user,
         task1,
@@ -62,7 +69,13 @@ def initdb():
         NumericQuestion(from_value=22, from_unit="cm", to_unit="mm", tasks=[task1]),
         NumericQuestion(from_value=4, from_unit="dm", to_unit="mm", tasks=[task1]),
         NumericQuestion(from_value=5, from_unit="km", to_unit="dm", tasks=[task1]),
-        ScaleQuestion(scale_min=20, scale_max=100, from_value=50000, from_unit="m", to_unit="km", tasks=[task1])
+        ScaleQuestion(scale_min=20, scale_max=100, from_value=50000, from_unit="m", to_unit="km", tasks=[task1]),
+        sortA1,
+        sortA2,
+        sortA3,
+        sortA4,
+        sortA5,
+        SortQuestion(dimensionality="length", order="asc", answers=[sortA1, sortA2, sortA3, sortA4, sortA5], tasks=[task1])
     ])
     db.session.commit()
 
