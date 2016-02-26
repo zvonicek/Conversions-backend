@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, ForeignKey, String, Boolean, Float, Table
 from sqlalchemy.dialects.postgresql import ENUM
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, reconstructor
 
 from app.engine.convert import convert, to_normalized
 from app.extensions import db
@@ -94,59 +94,21 @@ class ScaleQuestion(Question):
 
 # sort
 
-class Dimensionality(enum.Enum):
-    length = "length"
-    mass = "mass"
-    area = "area"
-    volume = "volume"
-    currency = "currency"
-
-    @property
-    def min(self):
-        return {
-            Dimensionality.length: "smallest",
-            Dimensionality.mass: "lightest",
-            Dimensionality.area: "smallest",
-            Dimensionality.volume: "smallest",
-            Dimensionality.currency: "cheapest"
-        }[self]
-
-    @property
-    def max(self):
-        return {
-            Dimensionality.length: "largest",
-            Dimensionality.mass: "heaviest",
-            Dimensionality.area: "largest",
-            Dimensionality.volume: "largest",
-            Dimensionality.currency: "most expensive"
-        }[self]
-
-
-class SortOrdering(enum.Enum):
-    asc = 'asc'
-    desc = 'desc'
-
-
 class SortQuestion(Question):
     __tablename__ = 'question_sort'
     id = Column(Integer, ForeignKey('question.id'), primary_key=True)
     dimensionality = Column(ENUM('length', 'mass', 'area', 'volume', 'temperature', 'currency', name='e_dimensionality'))
     order = Column(ENUM('asc', 'desc', name='e_order'))
+    min_label = ""
+    max_label = ""
 
     answers = relationship('SortAnswer')
 
     __mapper_args__ = {'polymorphic_identity': 'questionSort'}
 
-    def sorted_answers(self):
-        answers = sorted(self.answers, key=lambda x: x.normalized_value(), reverse=True)
-        for i in range(0, len(answers)):
-            answers[i].correct_pos = i
-
-        return answers
-
-    @property
-    def min(self):
-        return {
+    @reconstructor
+    def init_on_load(self):
+        self.min_label = {
             "length": "smallest",
             "mass": "lightest",
             "area": "smallest",
@@ -154,15 +116,24 @@ class SortQuestion(Question):
             "currency": "cheapest"
         }[self.dimensionality]
 
-    @property
-    def max(self):
-        return {
+        self.max_label = {
             "length": "largest",
             "mass": "heaviest",
             "area": "largest",
             "volume": "largest",
             "currency": "most expensive"
         }[self.dimensionality]
+
+        if self.order == 'desc':
+            self.min_label, self.max_label = self.max_label, self.min_label
+
+    def sorted_answers(self):
+        is_reverse = self.order == 'desc'
+        answers = sorted(self.answers, key=lambda x: x.normalized_value(), reverse=is_reverse)
+        for i in range(0, len(answers)):
+            answers[i].correct_pos = i
+
+        return answers
 
 
 class SortAnswer(db.Model):

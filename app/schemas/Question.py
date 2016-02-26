@@ -56,8 +56,8 @@ class SortAnswerSchema(QuestionSchema):
 
 class SortQuestionSchema(QuestionSchema):
     question = fields.Method("get_question")
-    topDescription = fields.Function(lambda obj: obj.min)
-    bottomDescription = fields.Function(lambda obj: obj.max)
+    topDescription = fields.Function(lambda obj: obj.min_label)
+    bottomDescription = fields.Function(lambda obj: obj.max_label)
     answers = fields.Nested(SortAnswerSchema, many=True, attribute="sorted_answers")
 
     @staticmethod
