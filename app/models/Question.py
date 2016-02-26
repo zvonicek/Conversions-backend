@@ -35,7 +35,7 @@ class Question(db.Model):
 class CloseEndedQuestion(Question):
     __tablename__ = 'question_closeEnded'
     id = Column(Integer, ForeignKey('question.id'), primary_key=True)
-    question_cz = Column(String)
+    #question_cz = Column(String)
     question_en = Column(String)
 
     answers = relationship('CloseEndedAnswer')
@@ -46,11 +46,9 @@ class CloseEndedQuestion(Question):
 class CloseEndedAnswer(db.Model):
     __tablename__ = 'answer_closeEnded'
     id = Column(Integer, primary_key=True)
-    task_id = Column(Integer, ForeignKey("question_closeEnded.id"))
-    answer_en = Column(String)
-    answer_cz = Column(String)
-    explanation_en = Column(String)
-    explanation_cz = Column(String)
+    question_id = Column(Integer, ForeignKey("question_closeEnded.id"))
+    value = Column(Integer)  # eg. 10
+    unit = Column(String)  # eg. cm
     correct = Column(Boolean)
 
     question = relationship('CloseEndedQuestion')
@@ -139,9 +137,9 @@ class SortQuestion(Question):
 class SortAnswer(db.Model):
     __tablename__ = 'answer_sort'
     id = Column(Integer, primary_key=True)
-    task_id = Column(Integer, ForeignKey("question_sort.id"))
+    question_id = Column(Integer, ForeignKey("question_sort.id"))
     value = Column(Integer)  # eg. 10
-    unit = Column(String) # eg. cm
+    unit = Column(String)  # eg. cm
     presented_pos = Column(Integer)
     correct_pos = None
 

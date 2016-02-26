@@ -1,6 +1,6 @@
 from marshmallow import Schema, fields
 
-from app.models import NumericQuestion, ScaleQuestion, SortQuestion
+from app.models import NumericQuestion, ScaleQuestion, SortQuestion, CloseEndedQuestion
 from app.engine.convert import format_quantity, format_value
 
 
@@ -12,6 +12,22 @@ class UnitField(fields.Field):
 class QuestionSchema(Schema):
     id = fields.Int(dump_only=True)
     type = fields.String()
+
+# close ended
+
+
+class CloseEndedAnswerSchema(Schema):
+    answer = fields.Function(lambda obj: format_value(obj.unit, obj.value))
+    explanation = ""  # not critical, maybe implement later
+    correct = fields.Boolean()
+
+
+class CloseEndedQuestionSchema(QuestionSchema):
+    question = fields.String(attribute="question_en")
+    answers = fields.Nested(CloseEndedAnswerSchema, many=True, attribute="answers")
+
+
+# numeric
 
 
 class NumericQuestionSchema(QuestionSchema):
@@ -47,7 +63,10 @@ class ScaleQuestionSchema(QuestionSchema):
         return "Convert {:d} {} to {}".format(obj.from_value, format_quantity(obj.from_unit), format_quantity(obj.to_unit))
 
 
-class SortAnswerSchema(QuestionSchema):
+# sort
+
+
+class SortAnswerSchema(Schema):
     title = fields.Function(lambda obj: format_value(obj.unit, obj.value))
     correctPosition = fields.Integer(attribute="correct_pos")
     presentedPosition = fields.Integer(attribute="presented_pos")
@@ -69,13 +88,12 @@ def question_schema_serialization_disambiguation(base_object, _):
     class_to_schema = {
         NumericQuestion.__name__: NumericQuestionSchema,
         ScaleQuestion.__name__: ScaleQuestionSchema,
-        SortQuestion.__name__: SortQuestionSchema
+        SortQuestion.__name__: SortQuestionSchema,
+        CloseEndedQuestion.__name__: CloseEndedQuestionSchema
     }
     try:
         return class_to_schema[base_object.__class__.__name__]()
     except KeyError:
         pass
 
-    raise TypeError("Could not detect type. "
-                    "Did not have a base or a length. "
-                    "Are you sure this is a shape?")
+    raise TypeError("Could not detect type.")

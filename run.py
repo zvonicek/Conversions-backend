@@ -59,6 +59,9 @@ def initdb():
     sortA4 = SortAnswer(value="3500", unit="mm", presented_pos=3)
     sortA5 = SortAnswer(value="9", unit="dm", presented_pos=4)
 
+    closeA1 = CloseEndedAnswer(value="15", unit="dm", correct=False)
+    closeA2 = CloseEndedAnswer(value="15", unit="m", correct=False)
+    closeA3 = CloseEndedAnswer(value="15", unit="cm", correct=True)
 
     db.session.add_all([
         user,
@@ -75,7 +78,11 @@ def initdb():
         sortA3,
         sortA4,
         sortA5,
-        SortQuestion(dimensionality="length", order="asc", answers=[sortA1, sortA2, sortA3, sortA4, sortA5], tasks=[task1])
+        SortQuestion(dimensionality="length", order="asc", answers=[sortA1, sortA2, sortA3, sortA4, sortA5], tasks=[task1]),
+        closeA1,
+        closeA2,
+        closeA3,
+        CloseEndedQuestion(question_en="What's better estimate for the length of a mobile phone", answers=[closeA1, closeA2, closeA3], tasks=[task1])
     ])
     db.session.commit()
 
