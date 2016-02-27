@@ -82,7 +82,9 @@ def initdb():
         closeA1,
         closeA2,
         closeA3,
-        CloseEndedQuestion(question_en="What's better estimate for the length of a mobile phone", answers=[closeA1, closeA2, closeA3], tasks=[task1])
+        CloseEndedQuestion(question_en="What's better estimate for the length of a mobile phone", answers=[closeA1, closeA2, closeA3], tasks=[task1],),
+        CurrencyQuestion(from_value=300, from_unit="CZK", to_unit="EUR", tasks=[task1]),
+        CurrencyQuestion(from_value=80, from_unit="NOK", to_unit="CZK", tasks=[task1])
     ])
     db.session.commit()
 

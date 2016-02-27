@@ -1,6 +1,8 @@
+from collections import OrderedDict
+
 from marshmallow import Schema, fields
 
-from app.models import NumericQuestion, ScaleQuestion, SortQuestion, CloseEndedQuestion
+from app.models import NumericQuestion, ScaleQuestion, SortQuestion, CloseEndedQuestion, CurrencyQuestion
 from app.engine.convert import format_quantity, format_value
 
 
@@ -13,8 +15,24 @@ class QuestionSchema(Schema):
     id = fields.Int(dump_only=True)
     type = fields.String()
 
-# close ended
 
+def question_schema_serialization_disambiguation(base_object, _):
+    class_to_schema = {
+        NumericQuestion.__name__: NumericQuestionSchema,
+        ScaleQuestion.__name__: ScaleQuestionSchema,
+        SortQuestion.__name__: SortQuestionSchema,
+        CloseEndedQuestion.__name__: CloseEndedQuestionSchema,
+        CurrencyQuestion.__name__: CurrencySchema
+    }
+    try:
+        return class_to_schema[base_object.__class__.__name__]()
+    except KeyError:
+        pass
+
+    raise TypeError("Could not detect type.")
+
+
+# close ended
 
 class CloseEndedAnswerSchema(Schema):
     answer = fields.Function(lambda obj: format_value(obj.unit, obj.value))
@@ -28,7 +46,6 @@ class CloseEndedQuestionSchema(QuestionSchema):
 
 
 # numeric
-
 
 class NumericQuestionSchema(QuestionSchema):
     fromValue = fields.Float(attribute="from_value")
@@ -65,7 +82,6 @@ class ScaleQuestionSchema(QuestionSchema):
 
 # sort
 
-
 class SortAnswerSchema(Schema):
     title = fields.Function(lambda obj: format_value(obj.unit, obj.value))
     correctPosition = fields.Integer(attribute="correct_pos")
@@ -84,16 +100,34 @@ class SortQuestionSchema(QuestionSchema):
         return "Sort from {} to {}".format(obj.min, obj.max)
 
 
-def question_schema_serialization_disambiguation(base_object, _):
-    class_to_schema = {
-        NumericQuestion.__name__: NumericQuestionSchema,
-        ScaleQuestion.__name__: ScaleQuestionSchema,
-        SortQuestion.__name__: SortQuestionSchema,
-        CloseEndedQuestion.__name__: CloseEndedQuestionSchema
-    }
-    try:
-        return class_to_schema[base_object.__class__.__name__]()
-    except KeyError:
-        pass
+# currency
 
-    raise TypeError("Could not detect type.")
+class CurrencySchema(Schema):
+    fromValue = fields.Float(attribute="from_value")
+    fromCurrency = UnitField(attribute="from_unit")
+    toUnit = UnitField(attribute="to_unit")
+    toValue = fields.Float(attribute="to_value")
+    tolerance = "20"
+    available_notes = fields.Method("get_available_notes")
+    correct_notes = fields.Method("get_correct_notes")
+
+    @staticmethod
+    def get_available_notes(obj):
+        return OrderedDict([(1, 5), (5, 5), (10, 10), (100, 5), (500, 5), (1000, 5)])
+
+    @staticmethod
+    def get_correct_notes(obj):
+        notes = CurrencySchema.get_available_notes(obj)
+        remaining_value = obj.to_value
+        correct_notes = []
+
+        for value, count in reversed(list(notes.items())):
+            for i in range(count):
+                if value <= remaining_value:
+                    remaining_value -= value
+                    correct_notes.append(value)
+                else:
+                    break
+
+        return list(reversed(correct_notes[:8]))
+

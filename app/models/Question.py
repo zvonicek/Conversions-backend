@@ -1,12 +1,10 @@
 from sqlalchemy import Column, Integer, ForeignKey, String, Boolean, Float, Table
-from sqlalchemy.dialects.postgresql import ENUM
+from sqlalchemy.dialects.postgresql import ENUM, ARRAY
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship, reconstructor
 
 from app.engine.convert import convert, to_normalized
 from app.extensions import db
-
-import enum
 
 question_task_association = Table('question_task_association', db.Model.metadata,
                                   Column('question_id', Integer, ForeignKey('question.id')),
@@ -83,7 +81,7 @@ class ScaleQuestion(Question):
     from_unit = Column(String)  # eg. cm
     to_unit = Column(String)   # eg. m
 
-    @hybrid_property
+    @property
     def to_value(self):
         return convert(self.from_unit, self.from_value, self.to_unit).magnitude
 
@@ -147,3 +145,21 @@ class SortAnswer(db.Model):
 
     def normalized_value(self):
         return to_normalized(self.unit, self.value)
+
+
+# currency
+
+class CurrencyQuestion(Question):
+    __tablename__ = 'question_currency'
+    id = Column(Integer, ForeignKey('question.id'), primary_key=True)
+
+    from_value = Column(Integer)  # eg. 10
+    from_unit = Column(String)  # eg. CZK
+    to_unit = Column(String)   # eg. EUR
+    # available_notes = Column(ARRAY(Integer, dimensions=2)) # (100, 4), (20, 1) -- 100,- 4x, 20,- 1x
+
+    @hybrid_property
+    def to_value(self):
+        return convert(self.from_unit, self.from_value, self.to_unit).magnitude
+
+    __mapper_args__ = {'polymorphic_identity': 'questionCurrency'}
