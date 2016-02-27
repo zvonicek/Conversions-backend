@@ -1,13 +1,13 @@
 Flask==0.10.1
-Flask-Migrate==1.7.0
+Flask-Migrate==1.8.0
 Flask-Script==2.0.5
 Flask-SQLAlchemy==2.1
 psycopg2==2.6.1
-SQLAlchemy==1.0.11
-virtualenv==14.0.1
+SQLAlchemy==1.0.12
+virtualenv==14.0.6
 virtualenv-clone==0.2.6
 virtualenvwrapper==4.7.1
 marshmallow==2.6.0
 marshmallow-polyfield==3.0
-Pint==0.6
+Pint==0.7.1
 requests==2.9.1
