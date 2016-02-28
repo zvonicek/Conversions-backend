@@ -2,7 +2,7 @@ from marshmallow import Schema, fields, post_load
 from marshmallow_polyfield import PolyField
 
 from app.models.Task import TaskRunQuestion
-from app.schemas.Question import question_schema_serialization_disambiguation
+from app.serialization.Question import question_schema_serialization_disambiguation
 
 
 class TaskSchema(Schema):
