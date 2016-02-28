@@ -12,7 +12,6 @@ class TaskSchema(Schema):
 
 
 class TaskRunQuestionSchema(Schema):
-    position = fields.Int(dump_only=True)
     question = PolyField(serialization_schema_selector=question_schema_serialization_disambiguation)
 
     @post_load
@@ -25,7 +24,7 @@ class TaskRunQuestionSchema(Schema):
 class TaskRunSchema(Schema):
     id = fields.Int(dump_only=True)
     task = fields.Nested(TaskSchema)
-    questions = fields.Nested(TaskRunQuestionSchema, many=True)
+    questions = fields.Nested(TaskRunQuestionSchema, many=True, only=('question'))
 
 
 task_schema = TaskSchema()
