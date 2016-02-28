@@ -52,26 +52,26 @@ class NumericQuestionSchema(QuestionSchema):
     fromUnit = UnitField(attribute="from_unit")
     toUnit = UnitField(attribute="to_unit")
     toValue = fields.Float(attribute="to_value")
-    minCorrectValue = fields.Method("get_min_correct_val")
-    maxCorrectValue = fields.Method("get_min_correct_val")
-    imagePath = fields.String()
+    minCorrectValue = fields.Method("get_min_correct_val")  # temporary
+    maxCorrectValue = fields.Method("get_max_correct_val")  # temporary
+    imagePath = fields.String(attribute="image_path")
 
     @staticmethod
     def get_min_correct_val(obj):
-        return obj.toValue
+        return obj.to_value
 
     @staticmethod
     def get_max_correct_val(obj):
-        return obj.toValue
+        return obj.to_value
 
 
 class ScaleQuestionSchema(QuestionSchema):
-    task = fields.Method("get_task")
+    question = fields.Method("get_task")
     fromValue = fields.Float(attribute="from_value")
     fromUnit = UnitField(attribute="from_unit")
     toUnit = UnitField(attribute="to_unit")
     correctValue = fields.Float(attribute="to_value")
-    correctTolerance = 42
+    correctTolerance = fields.Constant(42)  # temporary
     scaleMin = fields.Function(lambda obj: obj.to_value - obj.scale_min)
     scaleMax = fields.Function(lambda obj: obj.to_value + obj.scale_max)
 
@@ -97,23 +97,25 @@ class SortQuestionSchema(QuestionSchema):
 
     @staticmethod
     def get_question(obj):
-        return "Sort from {} to {}".format(obj.min, obj.max)
+        return "Sort from {} to {}".format(obj.min_label, obj.max_label)
 
 
 # currency
 
-class CurrencySchema(Schema):
+class CurrencySchema(QuestionSchema):
     fromValue = fields.Float(attribute="from_value")
     fromCurrency = UnitField(attribute="from_unit")
-    toUnit = UnitField(attribute="to_unit")
+    toCurrency = UnitField(attribute="to_unit")
     toValue = fields.Float(attribute="to_value")
-    tolerance = "20"
-    available_notes = fields.Method("get_available_notes")
-    correct_notes = fields.Method("get_correct_notes")
+    tolerance = fields.Constant(42)  # temporary
+    availableNotes = fields.Method("get_available_notes")
+    correctNotes = fields.Method("get_correct_notes")
 
     @staticmethod
     def get_available_notes(obj):
-        return OrderedDict([(1, 5), (5, 5), (10, 10), (100, 5), (500, 5), (1000, 5)])
+        return [CurrencySchema.create_note(1, obj.to_unit, 5), CurrencySchema.create_note(5, obj.to_unit, 5),
+                CurrencySchema.create_note(10, obj.to_unit, 10), CurrencySchema.create_note(100, obj.to_unit, 5),
+                CurrencySchema.create_note(500, obj.to_unit, 5), CurrencySchema.create_note(1000, obj.to_unit, 5)]
 
     @staticmethod
     def get_correct_notes(obj):
@@ -121,13 +123,20 @@ class CurrencySchema(Schema):
         remaining_value = obj.to_value
         correct_notes = []
 
-        for value, count in reversed(list(notes.items())):
-            for i in range(count):
-                if value <= remaining_value:
-                    remaining_value -= value
-                    correct_notes.append(value)
+        for note in reversed(list(notes)):
+            for i in range(note["count"]):
+                if note["value"] <= remaining_value:
+                    remaining_value -= note["value"]
+                    correct_notes.append(CurrencySchema.create_note(note["value"], obj.to_unit))
                 else:
                     break
 
         return list(reversed(correct_notes[:8]))
 
+    @staticmethod
+    def create_note(value, currency, count=None):
+        note = {"value": value, "currency": currency}
+        if count is not None:
+            note["count"] = count
+
+        return note

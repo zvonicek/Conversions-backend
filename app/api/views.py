@@ -1,8 +1,8 @@
-from flask import Blueprint, jsonify, abort
+from flask import Blueprint, jsonify, abort, request
 
 from app.engine.generator import generate_game
 from app.models import User, Task, TaskRun
-from app.schemas.Task import task_schema, tasks_schema, taskrun_schema
+from app.serialization.Task import task_schema, tasks_schema, taskrun_schema
 
 api = Blueprint('api', __name__, url_prefix='/api')
 
@@ -19,10 +19,10 @@ def home():
 
 
 # param user
-@api.route("/start/<task_name>/<user_id>", methods=['GET'])
-def start(task_name, user_id):
-    user = User.query.get(user_id)
-    task = Task.query.filter_by(identifier=task_name).first()
+@api.route("/start", methods=['GET'])
+def start():
+    user = User.query.get(request.args.get('user'))
+    task = Task.query.filter_by(identifier=request.args.get('task')).first()
 
     if user is None or task is None:
         abort(404)
