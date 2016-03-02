@@ -1,4 +1,5 @@
 import os
+import logging
 
 from flask import Flask, request, render_template
 
@@ -48,6 +49,9 @@ def configure_app(app, cfg=None):
 def configure_extensions(app):
     # flask-sqlalchemy
     db.init_app(app)
+
+    app.logger.addHandler(logging.StreamHandler())
+    app.logger.setLevel(logging.INFO)
 
 
 def configure_blueprints(app, blueprints):

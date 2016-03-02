@@ -21,12 +21,12 @@ def task_schema_serialization_disambiguation(base_object, _):
 
 
 class ScaleHintSchema(HintSchema):
-    topUnit = fields.String()
-    topMin = fields.Float()
-    topMax = fields.Float()
-    bottomUnit = fields.String()
-    bottomMin = fields.Float()
-    bottomMax = fields.Float()
+    topUnit = fields.String(attribute="top_unit")
+    topMin = fields.Float(attribute="top_min")
+    topMax = fields.Float(attribute="top_max")
+    bottomUnit = fields.String(attribute="bottom_unit")
+    bottomMin = fields.Float(attribute="bottom_min")
+    bottomMax = fields.Float(attribute="bottom_max")
 
 
 class TextHintSchema(HintSchema):

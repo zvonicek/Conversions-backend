@@ -41,10 +41,6 @@ def register_exchange_rates(exchange_rates):
         ureg.define(definition)
 
 
-def format_number(number):
-    return "{0:.3f}".format(number).rstrip('0').rstrip('.')
-
-
 def convert(quantity_from, value_from, quantity_to):
     """
     :param quantity_from: quantity identifier (eg. 'm' for meters)
@@ -59,8 +55,7 @@ def convert(quantity_from, value_from, quantity_to):
 
     from_q = ureg.Quantity(value_from, quantity_from)
     to_q = ureg.Quantity(1, quantity_to)
-    converted = from_q.to(to_q)
-    return "{0} {1:P}".format(format_number(converted.magnitude), converted.units)
+    return from_q.to(to_q)
 
 
 def to_normalized(quantity_from, value_from):
@@ -78,32 +73,50 @@ def to_normalized(quantity_from, value_from):
     return from_q.to_base_units().magnitude
 
 
-def format_quantity(quantity):
+# formatters
+
+
+def format_number(number):
+    return "{0:.3f}".format(number).rstrip('0').rstrip('.')
+
+
+def format_unit(unit):
     """
     Format unit to printable string (eg. "meter")
-    :param quantity: quantity identifier (eg. 'm' for meters)
-    :type quantity: String
+    :param unit: unit identifier (eg. 'm' for meters)
+    :type unit: String
     :return: formated quantity string (eg. "meter")
     :rtype: String
     """
 
-    q = ureg.parse_units(quantity)
+    q = ureg.parse_units(unit)
     return '{:P}'.format(q)
 
 
-def format_value(quantity_from, value_from):
+def format_quantity(quantity):
     """
-    Formats provided quantity and unit to single string
-    :param quantity_from: quantity identifier (eg. 'm' for meters)
-    :type quantity_from: String
+    Formats Pint.Quantity
+    :param quantity: quantity object
+    :type quantity: Pint.Quantity
+    :return: formatted unit string (eg. '5 meters')
+    :rtype: String
+    """
+
+    return "{0} {1:P}".format(format_number(quantity.magnitude), quantity.units)
+
+
+def format_value(unit_from, value_from):
+    """
+    Formats provided unit and value to single string
+    :param unit_from: unit identifier (eg. 'm' for meters)
+    :type unit_from: String
     :param value_from: amount (eg. 5)
     :type value_from: Number
     :return: formated unit string (eg. '5 meters')
     :rtype: String
     """
 
-    from_q = ureg.Quantity(value_from, quantity_from)
-    return '{:P}'.format(from_q)
+    return format_quantity(ureg.Quantity(value_from, unit_from))
 
 
 ureg = UnitRegistry()
