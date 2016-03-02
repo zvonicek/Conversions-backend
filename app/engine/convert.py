@@ -5,11 +5,14 @@ from app.config import config
 
 
 def register_exchange_rates(exchange_rates):
-    """Add currency definitions with exchange rates to unit registery.
-
-    Args:
-        exchange_rates (dict): `{symbol: rate}` mapping of currencies.
     """
+    Add currency definitions with exchange rates to unit registery.
+    :return:
+    :rtype:
+    :param exchange_rates: mapping of currencies.
+    :type exchange_rates: {symbol: rate}
+    """
+
     currency_names = {}
 
     # EUR will be the baseline currency. All exchange rates are
@@ -38,13 +41,34 @@ def register_exchange_rates(exchange_rates):
         ureg.define(definition)
 
 
-def convert(quantity_from, value_from, value_to):
+def convert(quantity_from, value_from, quantity_to):
+    """
+    :param quantity_from: quantity identifier (eg. 'm' for meters)
+    :type quantity_from: String
+    :param value_from: amount (eg. 5)
+    :type value_from: Number
+    :param quantity_to: output quantity identifier (eg. 'cm' for centimetres)
+    :type quantity_to: String
+    :return: quantity object with converted value (eg. containing 500 cm)
+    :rtype: Pint.Quantity
+    """
+
     from_q = ureg.Quantity(value_from, quantity_from)
-    to_q = ureg.Quantity(1, value_to)
+    to_q = ureg.Quantity(1, quantity_to)
     return from_q.to(to_q)
 
 
 def to_normalized(quantity_from, value_from):
+    """
+    Returns unit normalized in base style as implemented in Pint lib
+    :param quantity_from: quantity identifier (eg. 'm' for meters)
+    :type quantity_from: String
+    :param value_from: amount (eg. 5)
+    :type value_from: Number
+    :return: normalized amount of provided unit (eg. 500 if base unit is centimeter)
+    :rtype: Number
+    """
+
     from_q = ureg.Quantity(value_from, quantity_from)
     return from_q.to_base_units().magnitude
 
@@ -52,10 +76,10 @@ def to_normalized(quantity_from, value_from):
 def format_quantity(quantity):
     """
     Format unit to printable string (eg. "meter")
-    :param quantity:
-    :type quantity:
-    :return:
-    :rtype:
+    :param quantity: quantity identifier (eg. 'm' for meters)
+    :type quantity: String
+    :return: formated quantity string (eg. "meter")
+    :rtype: String
     """
 
     q = ureg.parse_units(quantity)
@@ -63,6 +87,16 @@ def format_quantity(quantity):
 
 
 def format_value(quantity_from, value_from):
+    """
+    Formats provided quantity and unit to single string
+    :param quantity_from: quantity identifier (eg. 'm' for meters)
+    :type quantity_from: String
+    :param value_from: amount (eg. 5)
+    :type value_from: Number
+    :return: formated unit string (eg. '5 meters')
+    :rtype: String
+    """
+
     from_q = ureg.Quantity(value_from, quantity_from)
     return '{:P}'.format(from_q)
 
