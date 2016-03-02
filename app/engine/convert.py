@@ -41,6 +41,10 @@ def register_exchange_rates(exchange_rates):
         ureg.define(definition)
 
 
+def format_number(number):
+    return "{0:.3f}".format(number).rstrip('0').rstrip('.')
+
+
 def convert(quantity_from, value_from, quantity_to):
     """
     :param quantity_from: quantity identifier (eg. 'm' for meters)
@@ -55,7 +59,8 @@ def convert(quantity_from, value_from, quantity_to):
 
     from_q = ureg.Quantity(value_from, quantity_from)
     to_q = ureg.Quantity(1, quantity_to)
-    return from_q.to(to_q)
+    converted = from_q.to(to_q)
+    return "{0} {1:P}".format(format_number(converted.magnitude), converted.units)
 
 
 def to_normalized(quantity_from, value_from):

@@ -5,6 +5,7 @@ from sqlalchemy.orm import relationship, reconstructor
 
 from app.engine.convert import convert, to_normalized
 from app.extensions import db
+from app.models.Hint import TextHint
 
 question_task_association = Table('question_task_association', db.Model.metadata,
                                   Column('question_id', Integer, ForeignKey('question.id')),
@@ -18,6 +19,7 @@ class Question(db.Model):
     time_fast = Column(Integer, nullable=True)
     time_neutral = Column(Integer, nullable=True)
     difficulty = Column(ENUM('Easy', 'Medium', 'Hard', name='difficulty'))
+    implicit_hint = Column(ENUM('None', 'Text', 'Scale', name='implicit_hint'))
     type = Column(String(50))
 
     tasks = relationship('Task', secondary=question_task_association, back_populates="questions")
@@ -61,11 +63,14 @@ class NumericQuestion(Question):
     from_unit = Column(String)  # eg. cm
     to_unit = Column(String)   # eg. m
     image_path = Column(String, nullable=True)
-    # doplnit hint
 
     @property
     def to_value(self):
         return convert(self.from_unit, self.from_value, self.to_unit).magnitude
+
+    @property
+    def hint(self):
+        return TextHint.create_unit_hint(self.from_unit, self.to_unit)
 
     __mapper_args__ = {'polymorphic_identity': 'questionNumeric'}
 
@@ -161,5 +166,9 @@ class CurrencyQuestion(Question):
     @hybrid_property
     def to_value(self):
         return convert(self.from_unit, self.from_value, self.to_unit).magnitude
+
+    @property
+    def hint(self):
+        return TextHint.create_unit_hint(self.from_unit, self.to_unit)
 
     __mapper_args__ = {'polymorphic_identity': 'questionCurrency'}

@@ -1,9 +1,12 @@
 from collections import OrderedDict
 
-from marshmallow import Schema, fields
+from marshmallow import Schema, fields, post_load, pre_load
+from marshmallow_polyfield import PolyField
 
-from app.models import NumericQuestion, ScaleQuestion, SortQuestion, CloseEndedQuestion, CurrencyQuestion
-from app.engine.convert import format_quantity, format_value
+from app.models import NumericQuestion, ScaleQuestion, SortQuestion, CloseEndedQuestion, CurrencyQuestion, TextHint, \
+    Hint
+from app.engine.convert import format_quantity, format_value, format_number
+from app.serialization.Hint import TextHintSchema, task_schema_serialization_disambiguation
 
 
 class UnitField(fields.Field):
@@ -14,6 +17,18 @@ class UnitField(fields.Field):
 class QuestionSchema(Schema):
     id = fields.Int(dump_only=True)
     type = fields.String()
+    hint = PolyField(serialization_schema_selector=task_schema_serialization_disambiguation)
+
+    @pre_load
+    def format_numbers(self, in_data):
+        in_data['fromValue'] = 5
+        return in_data
+
+    @post_load
+    def make_object(self, data):
+        return Hint(
+            data.get("hint")
+        )
 
 
 def question_schema_serialization_disambiguation(base_object, _):
@@ -77,7 +92,7 @@ class ScaleQuestionSchema(QuestionSchema):
 
     @staticmethod
     def get_task(obj):
-        return "Convert {:d} {} to {}".format(obj.from_value, format_quantity(obj.from_unit), format_quantity(obj.to_unit))
+        return "Convert {} {} to {}".format(format_number(obj.from_value), format_quantity(obj.from_unit), format_quantity(obj.to_unit))
 
 
 # sort
