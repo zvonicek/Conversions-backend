@@ -62,7 +62,7 @@ class NumericQuestion(Question):
     from_value = Column(Integer)  # eg. 10
     from_unit = Column(String)  # eg. cm
     to_unit = Column(String)   # eg. m
-    image_path = Column(String, nullable=True)
+    image_name = Column(String, nullable=True)
 
     @property
     def to_value(self):

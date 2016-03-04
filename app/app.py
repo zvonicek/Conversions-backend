@@ -26,7 +26,7 @@ def create_app(config, app_name='Math', blueprints=None):
     if blueprints is None:
         blueprints = DEFAULT_BLUEPRINTS
 
-    app = Flask(app_name)
+    app = Flask(app_name, static_folder="app/static")
     configure_app(app, config)
     configure_blueprints(app, blueprints)
     configure_extensions(app)

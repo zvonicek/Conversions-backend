@@ -1,6 +1,6 @@
 from collections import OrderedDict
 
-from flask import logging
+from flask import logging, url_for
 from marshmallow import Schema, fields, post_load, pre_load
 from marshmallow_polyfield import PolyField
 
@@ -71,7 +71,14 @@ class NumericQuestionSchema(QuestionSchema):
     toValue = fields.Float(attribute="to_value")
     minCorrectValue = fields.Method("get_min_correct_val")  # temporary
     maxCorrectValue = fields.Method("get_max_correct_val")  # temporary
-    imagePath = fields.String(attribute="image_path")
+    imagePath = fields.Method("get_image_path")
+
+    @staticmethod
+    def get_image_path(obj):
+        if obj.image_name:
+            return url_for('static', filename='tasks_img/'+obj.image_name+'.png')
+        else:
+            return None
 
     @staticmethod
     def get_min_correct_val(obj):
