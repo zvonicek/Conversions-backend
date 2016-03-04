@@ -9,24 +9,22 @@ from app.serialization.Task import task_schema, tasks_schema, taskrun_schema
 api = Blueprint('api', __name__, url_prefix='/api')
 
 
-@api.route("/")
-def home():
-    # tasks = Task.query.all()
-    # result = tasks_schema.dump(tasks)
-    # print(result)
-    # return jsonify({"tasks": result.data})
-    taskrun = TaskRun.query.first()
-    result = taskrun_schema.dump(taskrun)
-    return jsonify(result.data)
-
-
 # param user
 @api.route("/start", methods=['GET'])
 def start():
-    user = User.query.get(request.args.get('user'))
+    global user
+    user = User.query.filter_by(uuid=request.args.get('user')).first()
+    if user is None:
+        user = User(uuid=request.args.get('user'))
+        db.session.add(user)
+
+    user.app_version = request.args.get('version')
+    user.language = request.args.get('language')
+    db.session.commit()
+
     task = Task.query.filter_by(identifier=request.args.get('task')).first()
 
-    if user is None or task is None:
+    if task is None:
         abort(404)
 
     taskrun = generate_game(task, user)
