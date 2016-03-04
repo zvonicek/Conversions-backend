@@ -17,6 +17,8 @@ class UnitField(fields.Field):
 
 class QuestionSchema(Schema):
     id = fields.Int(dump_only=True)
+    fastTime = fields.Constant(10)  # temporary
+    neutralTime = fields.Constant(20)  # temporary
     type = fields.String()
     hint = PolyField(serialization_schema_selector=task_schema_serialization_disambiguation)
 
