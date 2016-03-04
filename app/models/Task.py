@@ -1,4 +1,6 @@
+import datetime
 from sqlalchemy import Column, Integer, ForeignKey, String, DateTime, Boolean, Float
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 
 from app.extensions import db
@@ -25,7 +27,8 @@ class TaskRun(db.Model):
     id = Column(Integer, primary_key=True)
     task_id = Column(Integer, ForeignKey("task.id"))
     user_id = Column(Integer, ForeignKey("user.id"))
-    date = Column(DateTime)
+    date = Column(DateTime, default=datetime.datetime.utcnow)
+    completed = Column(Boolean, nullable=True)
 
     task = relationship("Task")
     user = relationship("User")
@@ -38,9 +41,9 @@ class TaskRunQuestion(db.Model):
     question_id = Column(Integer, ForeignKey("question.id"), primary_key=True)
     position = Column(Integer)
     correct = Column(Boolean, nullable=True)
-    time = Column(Integer, nullable=True)
-    hintShown = Column(Boolean, nullable=True)
-    answer = Column(Float, nullable=True)
+    time = Column(Float, nullable=True)
+    hint_shown = Column(Boolean, nullable=True)
+    answer = Column(JSONB, nullable=True)
 
     taskrun = relationship("TaskRun")
     question = relationship("Question")
