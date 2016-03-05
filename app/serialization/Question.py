@@ -53,7 +53,7 @@ def question_schema_serialization_disambiguation(base_object, _):
 
 class CloseEndedAnswerSchema(Schema):
     answer = fields.Function(lambda obj: format_value(obj.unit, obj.value))
-    explanation = ""  # not critical, maybe implement later
+    explanation = None  # not critical, maybe implement later
     correct = fields.Boolean()
 
 

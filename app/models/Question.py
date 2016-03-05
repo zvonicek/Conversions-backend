@@ -5,7 +5,7 @@ from sqlalchemy.orm import relationship, reconstructor
 
 from app.engine.convert import convert, to_normalized
 from app.extensions import db
-from app.models.Hint import TextHint
+from app.models.Hint import TextHint, ScaleHint
 
 question_task_association = Table('question_task_association', db.Model.metadata,
                                   Column('question_id', Integer, ForeignKey('question.id')),

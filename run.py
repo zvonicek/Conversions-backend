@@ -34,7 +34,6 @@ def initdb():
     db.drop_all()
     db.create_all()
 
-    user = User()
     task1 = Task(identifier='mass-metric', name='Mass - Metric')
     task2 = Task(identifier='mass-imperial', name='Mass - Imperial')
     task3 = Task(identifier='mass-combined', name='Mass - Combined')
@@ -64,7 +63,6 @@ def initdb():
     closeA3 = CloseEndedAnswer(value="15", unit="cm", correct=True)
 
     db.session.add_all([
-        user,
         task1,
         NumericQuestion(from_value=5, from_unit="m", to_unit="cm", tasks=[task1]),
         NumericQuestion(from_value=2, from_unit="km", to_unit="m", tasks=[task1]),
@@ -96,13 +94,6 @@ def currency():
 
     for currency, rate in list(exchange_rates.items()):
         print('1 EUR = {0} {1}'.format(rate, currency))
-
-
-@manager.command
-def convert():
-    from app.engine.convert import convert
-
-    print(convert("czk", 200, "nok"))
 
 
 manager.add_option('-c', '--config',

@@ -37,7 +37,7 @@ def register_exchange_rates(exchange_rates):
         except UndefinedUnitError:
             definition += ' = {0}'.format(abbr.lower())
 
-        print('Registering currency : %r', definition)
+        # print('Registering currency : %r', definition)
         ureg.define(definition)
 
 
@@ -77,6 +77,13 @@ def to_normalized(quantity_from, value_from):
 
 
 def format_number(number):
+    """
+    Format number to correct string representation (with 3 decimal places, without trailing zeros)
+    :param number: nubmer (eg. 2.43356)
+    :type number: Int
+    :return: string representing number (eg. "2.433")
+    :rtype: String
+    """
     return "{0:.3f}".format(number).rstrip('0').rstrip('.')
 
 
