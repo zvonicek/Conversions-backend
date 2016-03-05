@@ -29,6 +29,16 @@ class ScaleHint(Hint):
 
     __mapper_args__ = {'polymorphic_identity': 'hintScale'}
 
+    @classmethod
+    def create_unit_hint(cls, from_unit, to_unit):
+        global converted_value
+        converted_value = convert(from_unit, 1, to_unit).magnitude
+        if converted_value < 1:
+            converted_value = convert(to_unit, 1, from_unit).magnitude
+            return ScaleHint(top_unit=from_unit, top_min=0, top_max=converted_value, bottom_unit=to_unit, bottom_min=0, bottom_max=1)
+        else:
+            return ScaleHint(top_unit=from_unit, top_min=0, top_max=1, bottom_unit=to_unit, bottom_min=0, bottom_max=converted_value)
+
 
 class TextHint(Hint):
     __tablename__ = 'hint_numeric'
