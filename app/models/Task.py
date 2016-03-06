@@ -7,14 +7,6 @@ from app.extensions import db
 from app.models.Question import question_task_association
 
 
-class User(db.Model):
-    __tablename__ = 'user'
-    id = Column(Integer, primary_key=True)
-    uuid = Column(String)
-    app_version = Column(String)
-    language = Column(String)
-
-
 class Task(db.Model):
     __tablename__ = 'task'
     id = Column(Integer, primary_key=True)

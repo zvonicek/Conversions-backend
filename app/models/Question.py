@@ -38,7 +38,7 @@ class CloseEndedQuestion(Question):
     #question_cz = Column(String)
     question_en = Column(String)
 
-    answers = relationship('CloseEndedAnswer')
+    answers = relationship('CloseEndedAnswer')  # max 3 answers !!
 
     __mapper_args__ = {'polymorphic_identity': 'questionCloseEnded'}
 
@@ -103,7 +103,7 @@ class SortQuestion(Question):
     min_label = ""
     max_label = ""
 
-    answers = relationship('SortAnswer')
+    answers = relationship('SortAnswer')  # max 4 answers !!
 
     __mapper_args__ = {'polymorphic_identity': 'questionSort'}
 
