@@ -16,6 +16,7 @@ question_task_association = Table('question_task_association', db.Model.metadata
 class Question(db.Model):
     __tablename__ = 'question'
     id = Column(Integer, primary_key=True)
+    skill_id = Column(Integer, ForeignKey('skill.id'))
     time_fast = Column(Integer, nullable=True)
     time_neutral = Column(Integer, nullable=True)
     difficulty = Column(ENUM('Easy', 'Medium', 'Hard', name='difficulty'))
@@ -23,6 +24,7 @@ class Question(db.Model):
     type = Column(String(50))
 
     tasks = relationship('Task', secondary=question_task_association, back_populates="questions")
+    skill = relationship('Skill')
 
     __mapper_args__ = {
         'polymorphic_identity': 'question',
