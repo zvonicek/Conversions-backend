@@ -63,26 +63,26 @@ def initdb():
     closeA3 = CloseEndedAnswer(value="15", unit="cm", correct=True)
 
     db.session.add_all([
+        NumericQuestion(from_value=5, from_unit="m", to_unit="cm", task=task1, image_name="car"),
         task1,
-        NumericQuestion(from_value=5, from_unit="m", to_unit="cm", tasks=[task1]),
-        NumericQuestion(from_value=2, from_unit="km", to_unit="m", tasks=[task1]),
-        NumericQuestion(from_value=8, from_unit="m", to_unit="dm", tasks=[task1]),
-        NumericQuestion(from_value=22, from_unit="cm", to_unit="mm", tasks=[task1]),
-        NumericQuestion(from_value=4, from_unit="dm", to_unit="mm", tasks=[task1]),
-        NumericQuestion(from_value=5, from_unit="km", to_unit="dm", tasks=[task1]),
-        ScaleQuestion(scale_min=20, scale_max=100, from_value=50000, from_unit="m", to_unit="km", tasks=[task1]),
         sortA1,
         sortA2,
         sortA3,
         sortA4,
         sortA5,
-        SortQuestion(dimensionality="length", order="asc", answers=[sortA1, sortA2, sortA3, sortA4, sortA5], tasks=[task1]),
+        SortQuestion(dimensionality="length", order="asc", answers=[sortA1, sortA2, sortA3, sortA4, sortA5], task=task1),
+        NumericQuestion(from_value=2, from_unit="km", to_unit="m", task=task1, image_name="field"),
+        NumericQuestion(from_value=8, from_unit="m", to_unit="dm", task=task1),
+        NumericQuestion(from_value=22, from_unit="cm", to_unit="mm", task=task1),
+        NumericQuestion(from_value=4, from_unit="dm", to_unit="mm", task=task1),
+        NumericQuestion(from_value=5, from_unit="km", to_unit="dm", task=task1),
+        ScaleQuestion(scale_less=20, scale_more=100, from_value=50000, from_unit="m", to_unit="km", task=task1),
         closeA1,
         closeA2,
         closeA3,
-        CloseEndedQuestion(question_en="What's better estimate for the length of a mobile phone", answers=[closeA1, closeA2, closeA3], tasks=[task1],),
-        CurrencyQuestion(from_value=300, from_unit="CZK", to_unit="EUR", tasks=[task1]),
-        CurrencyQuestion(from_value=80, from_unit="NOK", to_unit="CZK", tasks=[task1])
+        CloseEndedQuestion(question_en="What's better estimate for the length of a mobile phone", answers=[closeA1, closeA2, closeA3], task=task1,),
+        CurrencyQuestion(from_value=300, from_unit="CZK", to_unit="EUR", task=task1),
+        CurrencyQuestion(from_value=80, from_unit="NOK", to_unit="CZK", task=task1)
     ])
     db.session.commit()
 

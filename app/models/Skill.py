@@ -17,6 +17,8 @@ class User(db.Model):
 class Skill(db.Model):
     __tablename = 'skill'
     id = Column(Integer, primary_key=True)
+    unit1 = Column(String)
+    unit2 = Column(String)
 
     users = relationship('UserSkill', back_populates="skill")
     questions = relationship('Question', back_populates="skill")

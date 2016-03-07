@@ -33,7 +33,7 @@ def choose_questions(task, user, number):
     """
 
     run_questions = []
-    questions = Question.query.filter(Question.tasks.contains(task)).all()
+    questions = task.questions
     i = 0
     for question in questions:
         run_questions.append(TaskRunQuestion(question=question, position=i))

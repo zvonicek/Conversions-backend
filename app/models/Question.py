@@ -7,15 +7,11 @@ from app.engine.convert import convert, to_normalized
 from app.extensions import db
 from app.models.Hint import TextHint, ScaleHint
 
-question_task_association = Table('question_task_association', db.Model.metadata,
-                                  Column('question_id', Integer, ForeignKey('question.id')),
-                                  Column('task_id', Integer, ForeignKey('task.id')),
-                                  )
-
 
 class Question(db.Model):
     __tablename__ = 'question'
     id = Column(Integer, primary_key=True)
+    task_id = Column(Integer, ForeignKey('task.id'))
     skill_id = Column(Integer, ForeignKey('skill.id'))
     time_fast = Column(Integer, nullable=True)
     time_neutral = Column(Integer, nullable=True)
@@ -23,8 +19,8 @@ class Question(db.Model):
     implicit_hint = Column(ENUM('None', 'Text', 'Scale', name='implicit_hint'))
     type = Column(String(50))
 
-    tasks = relationship('Task', secondary=question_task_association, back_populates="questions")
-    skill = relationship('Skill')
+    task = relationship('Task', back_populates='questions')
+    skill = relationship('Skill', back_populates='questions')
 
     __mapper_args__ = {
         'polymorphic_identity': 'question',
@@ -82,11 +78,19 @@ class NumericQuestion(Question):
 class ScaleQuestion(Question):
     __tablename__ = "question_scale"
     id = Column(Integer, ForeignKey('question.id'), primary_key=True)
-    scale_min = Column(Float)
-    scale_max = Column(Float)
+    scale_less = Column(Float)  # points on the scale before the actual value
+    scale_more = Column(Float)  # points on the scale after the actual value
     from_value = Column(Integer)  # eg. 10
     from_unit = Column(String)  # eg. cm
     to_unit = Column(String)   # eg. m
+
+    @property
+    def scale_min(self):
+        return self.to_value - self.scale_less
+
+    @property
+    def scale_max(self):
+        return self.to_value + self.scale_more
 
     @property
     def to_value(self):

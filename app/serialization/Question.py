@@ -4,6 +4,7 @@ from flask import logging, url_for
 from marshmallow import Schema, fields, post_load, pre_load
 from marshmallow_polyfield import PolyField
 
+from app.engine.utils import get_tolerance
 from app.models import NumericQuestion, ScaleQuestion, SortQuestion, CloseEndedQuestion, CurrencyQuestion, TextHint, \
     Hint
 from app.engine.convert import format_unit, format_value, format_number
@@ -69,8 +70,8 @@ class NumericQuestionSchema(QuestionSchema):
     fromUnit = UnitField(attribute="from_unit")
     toUnit = UnitField(attribute="to_unit")
     toValue = fields.Float(attribute="to_value")
-    minCorrectValue = fields.Method("get_min_correct_val")  # temporary
-    maxCorrectValue = fields.Method("get_max_correct_val")  # temporary
+    minCorrectValue = fields.Function(lambda obj: obj.to_value - get_tolerance(obj.task, obj.to_value))
+    maxCorrectValue = fields.Function(lambda obj: obj.to_value + get_tolerance(obj.task, obj.to_value))
     imagePath = fields.Method("get_image_path")
 
     @staticmethod
@@ -80,14 +81,6 @@ class NumericQuestionSchema(QuestionSchema):
         else:
             return None
 
-    @staticmethod
-    def get_min_correct_val(obj):
-        return obj.to_value
-
-    @staticmethod
-    def get_max_correct_val(obj):
-        return obj.to_value
-
 
 class ScaleQuestionSchema(QuestionSchema):
     question = fields.Method("get_task")
@@ -95,9 +88,9 @@ class ScaleQuestionSchema(QuestionSchema):
     fromUnit = UnitField(attribute="from_unit")
     toUnit = UnitField(attribute="to_unit")
     correctValue = fields.Float(attribute="to_value")
-    correctTolerance = fields.Constant(42)  # temporary
-    scaleMin = fields.Function(lambda obj: obj.to_value - obj.scale_min)
-    scaleMax = fields.Function(lambda obj: obj.to_value + obj.scale_max)
+    correctTolerance = fields.Function(lambda obj: get_tolerance(obj.task, obj.scale_max - obj.scale_min))
+    scaleMin = fields.Float(attribute="scale_min")
+    scaleMax = fields.Float(attribute="scale_max")
 
     @staticmethod
     def get_task(obj):
@@ -131,7 +124,7 @@ class CurrencySchema(QuestionSchema):
     fromCurrency = UnitField(attribute="from_unit")
     toCurrency = UnitField(attribute="to_unit")
     toValue = fields.Float(attribute="to_value")
-    tolerance = fields.Constant(42)  # temporary
+    tolerance = fields.Function(lambda obj: get_tolerance(obj.task, obj.to_value))
     availableNotes = fields.Method("get_available_notes")
     correctNotes = fields.Method("get_correct_notes")
 
