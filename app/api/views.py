@@ -8,6 +8,9 @@ from app.serialization.Task import task_schema, tasks_schema, taskrun_schema
 
 api = Blueprint('api', __name__, url_prefix='/api')
 
+@api.route('')
+def index():
+    return "It works!"
 
 # param user
 @api.route("/start", methods=['GET'])
