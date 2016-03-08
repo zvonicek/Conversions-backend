@@ -15,7 +15,8 @@ class Question(db.Model):
     skill_id = Column(Integer, ForeignKey('skill.id'))
     time_fast = Column(Integer, nullable=True)
     time_neutral = Column(Integer, nullable=True)
-    difficulty = Column(ENUM('Easy', 'Medium', 'Hard', name='difficulty'))
+    difficulty = Column(Float, default=0)
+    # answered_times = Column(Integer, default=0) -- do we need this for recommendation?
     implicit_hint = Column(ENUM('None', 'Text', 'Scale', name='implicit_hint'))
     type = Column(String(50))
 

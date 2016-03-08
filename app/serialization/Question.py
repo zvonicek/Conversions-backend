@@ -70,8 +70,7 @@ class NumericQuestionSchema(QuestionSchema):
     fromUnit = UnitField(attribute="from_unit")
     toUnit = UnitField(attribute="to_unit")
     toValue = fields.Float(attribute="to_value")
-    minCorrectValue = fields.Function(lambda obj: obj.to_value - get_tolerance(obj.task, obj.to_value))
-    maxCorrectValue = fields.Function(lambda obj: obj.to_value + get_tolerance(obj.task, obj.to_value))
+    tolerance = fields.Function(lambda obj: get_tolerance(obj.task, obj.to_value))
     imagePath = fields.Method("get_image_path")
 
     @staticmethod
