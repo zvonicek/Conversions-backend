@@ -4,6 +4,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 
 from app.extensions import db
+from app.models.Question import question_task_association
 
 
 class Task(db.Model):
@@ -13,7 +14,7 @@ class Task(db.Model):
     name = Column(String)
 
     task_runs = relationship("TaskRun", back_populates="task")
-    questions = relationship('Question', back_populates="task")
+    questions = relationship('Question', secondary=question_task_association, back_populates="tasks")
 
 
 class TaskRun(db.Model):

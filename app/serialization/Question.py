@@ -80,7 +80,7 @@ class NumericQuestionSchema(QuestionSchema):
     fromUnit = UnitField(attribute="from_unit")
     toUnit = UnitField(attribute="to_unit")
     toValue = fields.Float(attribute="to_value")
-    tolerance = fields.Function(lambda obj: get_tolerance(obj.task, obj.to_value))
+    tolerance = fields.Function(lambda obj: get_tolerance(obj.to_unit, obj.to_value))
     imagePath = fields.Method("get_image_path")
 
     @staticmethod
@@ -97,7 +97,7 @@ class ScaleQuestionSchema(QuestionSchema):
     fromUnit = UnitField(attribute="from_unit")
     toUnit = UnitField(attribute="to_unit")
     correctValue = fields.Float(attribute="to_value")
-    correctTolerance = fields.Function(lambda obj: get_tolerance(obj.task, obj.scale_max - obj.scale_min))
+    correctTolerance = fields.Function(lambda obj: get_tolerance(obj.to_unit, obj.scale_max - obj.scale_min))
     scaleMin = fields.Float(attribute="scale_min")
     scaleMax = fields.Float(attribute="scale_max")
 

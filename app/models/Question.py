@@ -8,10 +8,15 @@ from app.extensions import db
 from app.models.Hint import TextHint, ScaleHint
 
 
+question_task_association = Table('question_task_association', db.Model.metadata,
+                                  Column('question_id', Integer, ForeignKey('question.id')),
+                                  Column('task_id', Integer, ForeignKey('task.id')),
+                                  )
+
+
 class Question(db.Model):
     __tablename__ = 'question'
     id = Column(Integer, primary_key=True)
-    task_id = Column(Integer, ForeignKey('task.id'))
     skill_id = Column(Integer, ForeignKey('skill.id'))
     time_fast = Column(Integer, nullable=True)
     time_neutral = Column(Integer, nullable=True)
@@ -20,7 +25,7 @@ class Question(db.Model):
     implicit_hint = Column(ENUM('None', 'Text', 'Scale', name='implicit_hint'))
     type = Column(String(50))
 
-    task = relationship('Task', back_populates='questions')
+    tasks = relationship('Task', secondary=question_task_association, back_populates="questions")
     skill = relationship('Skill', back_populates='questions')
 
     __mapper_args__ = {

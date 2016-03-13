@@ -30,9 +30,9 @@ def load_numeric(file):
         if len(task_name) > 0 and task_name in tasks:
             global question
             if len(row[5]) > 0:
-                questions.append(NumericQuestion(difficulty=float(row[1].replace(',','.')), from_value=float(row[2].replace(',','.')), from_unit=row[3], to_unit=row[4], image_name=row[5], task=tasks[task_name]))
+                questions.append(NumericQuestion(difficulty=float(row[1].replace(',','.')), from_value=float(row[2].replace(',','.')), from_unit=row[3], to_unit=row[4], image_name=row[5], tasks=[tasks[task_name]]))
             else:
-                questions.append(NumericQuestion(difficulty=float(row[1].replace(',','.')), from_value=float(row[2].replace(',','.')), from_unit=row[3], to_unit=row[4], task=tasks[task_name]))
+                questions.append(NumericQuestion(difficulty=float(row[1].replace(',','.')), from_value=float(row[2].replace(',','.')), from_unit=row[3], to_unit=row[4], tasks=[tasks[task_name]]))
 
     db.session.add_all(questions)
     db.session.commit()
@@ -47,7 +47,7 @@ def load_sort(file):
 
         if len(task_name) > 0 and len(row[1]) > 0 and task_name in tasks:
             dimensionality = task_name.split('_')[0]
-            question = SortQuestion(difficulty=float(row[2].replace(',','.')), dimensionality=dimensionality, order=row[1], task=tasks[task_name])
+            question = SortQuestion(difficulty=float(row[2].replace(',','.')), dimensionality=dimensionality, order=row[1], tasks=[tasks[task_name]])
             questions.append(question)
 
             for i in range(0,4):
@@ -69,7 +69,7 @@ def load_scale(file):
         task_name = row[0]
 
         if len(task_name) > 0 and task_name in tasks:
-            questions.append(ScaleQuestion(difficulty=float(row[1].replace(',','.')), from_value=float(row[2].replace(',','.')), from_unit=row[3], to_unit=row[4], scale_min=float(row[5].replace(',','.')), scale_max=float(row[6].replace(',','.')), task=tasks[task_name]))
+            questions.append(ScaleQuestion(difficulty=float(row[1].replace(',','.')), from_value=float(row[2].replace(',','.')), from_unit=row[3], to_unit=row[4], scale_min=float(row[5].replace(',','.')), scale_max=float(row[6].replace(',','.')), tasks=[tasks[task_name]]))
 
     db.session.add_all(questions)
     db.session.commit()
@@ -83,7 +83,7 @@ def load_closeended(file):
         task_name = row[0]
 
         if len(task_name) > 0 and len(row[3]) > 0 and task_name in tasks:
-            question = CloseEndedQuestion(difficulty=float(row[3].replace(',','.')), question_en=row[2], question_type=row[1], task=tasks[task_name])
+            question = CloseEndedQuestion(difficulty=float(row[3].replace(',','.')), question_en=row[2], question_type=row[1], tasks=[tasks[task_name]])
             questions.append(question)
 
             for i in range(0,3):
@@ -106,7 +106,7 @@ def load_currency(file):
         task_name = row[0]
 
         if len(task_name) > 0 and task_name in tasks:
-            questions.append(CurrencyQuestion(difficulty=float(row[1].replace(',','.')), from_value=float(row[2].replace(',','.')), from_unit=row[3], to_unit=row[4], task=tasks[task_name]))
+            questions.append(CurrencyQuestion(difficulty=float(row[1].replace(',','.')), from_value=float(row[2].replace(',','.')), from_unit=row[3], to_unit=row[4], tasks=[tasks[task_name]]))
 
     db.session.add_all(questions)
     db.session.commit()
