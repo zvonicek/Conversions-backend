@@ -4,3 +4,4 @@ migrations/
 *.pyc
 *.pyo
 app/static/*
+csv/*

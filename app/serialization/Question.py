@@ -59,9 +59,19 @@ class CloseEndedAnswerSchema(Schema):
 
 
 class CloseEndedQuestionSchema(QuestionSchema):
-    question = fields.String(attribute="question_en")
+    question = fields.Method('get_question')
     answers = fields.Nested(CloseEndedAnswerSchema, many=True, attribute="answers")
 
+    @staticmethod
+    def get_question(obj):
+        if obj.question_type == "estimate_height":
+            return "Which is a better estimate for the height of a {}?".format(obj.question_en)
+        elif obj.question_type == "estimate_length":
+            return "Which is a better estimate for the length of a {}?".format(obj.question_en)
+        elif obj.question_type == "estimate_distance":
+            return "Which is a better estimate for the distance {}?".format(obj.question_en)
+        elif obj.question_type == "compare":
+            return obj.question_en
 
 # numeric
 

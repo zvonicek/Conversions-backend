@@ -34,6 +34,7 @@ class Question(db.Model):
 class CloseEndedQuestion(Question):
     __tablename__ = 'question_closeEnded'
     id = Column(Integer, ForeignKey('question.id'), primary_key=True)
+    question_type = Column(String)
     #question_cz = Column(String)
     question_en = Column(String)
 
@@ -79,19 +80,11 @@ class NumericQuestion(Question):
 class ScaleQuestion(Question):
     __tablename__ = "question_scale"
     id = Column(Integer, ForeignKey('question.id'), primary_key=True)
-    scale_less = Column(Float)  # points on the scale before the actual value
-    scale_more = Column(Float)  # points on the scale after the actual value
+    scale_min = Column(Float)
+    scale_max = Column(Float)
     from_value = Column(Integer)  # eg. 10
     from_unit = Column(String)  # eg. cm
     to_unit = Column(String)   # eg. m
-
-    @property
-    def scale_min(self):
-        return self.to_value - self.scale_less
-
-    @property
-    def scale_max(self):
-        return self.to_value + self.scale_more
 
     @property
     def to_value(self):
