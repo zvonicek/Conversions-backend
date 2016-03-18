@@ -5,15 +5,12 @@ from app.models import TaskRun, Question, Task, User
 from app.models.Task import TaskRunQuestion
 
 
-def generate_game(task, user):
+def generate_game(task: Task, user: User) -> TaskRun:
     """
     Generates a new game
     :param task: task for which to generate a game
-    :type task: Task
     :param user: user for which to generate a game
-    :type user: User
     :return: freshly generated game
-    :rtype: TaskRun
     """
 
     taskrun = TaskRun(task=task, user=user, questions=choose_questions(task, user, 5))
@@ -31,13 +28,15 @@ def choose_questions(task: Task, user: User, number: int) -> [TaskRunQuestion]:
     """
 
     # shuffle questions
-    questions = random.sample(task.questions, len(task.questions))
+    questions = Question.query.filter(Question.tasks.contains(task)).all()
+    questions = random.sample(task.questions, len(questions))
 
     choosen_questions = []
     choosen_types_counts = {}
 
     for i in range(0, number):
-        questions.sort(key=lambda k: question_priority(k, user, choosen_types_counts))
+        random.shuffle(questions)
+        questions.sort(key=lambda k: question_priority(k, user, choosen_types_counts), reverse=True)
 
         choosen_questions.append(TaskRunQuestion(question=questions[0], position=i))
         choosen_types_counts[questions[0].type] = choosen_types_counts.get(questions[0].type, 0) + 1
@@ -47,4 +46,7 @@ def choose_questions(task: Task, user: User, number: int) -> [TaskRunQuestion]:
 
 
 def question_priority(question: Question, user: User, choosen_types_counts: {}) -> float:
-    return 1.0
+    if question.type in choosen_types_counts:
+        return 1 - choosen_types_counts[question.type]
+    else:
+        return 1.0
