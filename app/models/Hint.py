@@ -49,5 +49,12 @@ class TextHint(Hint):
 
     @classmethod
     def create_unit_hint(cls, from_unit, to_unit):
-        converted_value = format_quantity(convert(from_unit, 1, to_unit))
-        return TextHint(text='{} is {}'.format(format_value(from_unit, 1), converted_value))
+        converted_value = convert(from_unit, 1, to_unit)
+
+        if converted_value.magnitude > 0.001:
+            value = format_quantity(converted_value)
+            return TextHint(text='{} is {}'.format(format_value(from_unit, 1), value))
+        else:
+            converted_value = convert(to_unit, 1, from_unit)
+            value = format_quantity(converted_value)
+            return TextHint(text='{} is {}'.format(format_value(to_unit, 1), value))
