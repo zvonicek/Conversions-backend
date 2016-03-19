@@ -1,10 +1,11 @@
 from sqlalchemy import Column, Integer, ForeignKey, String, Boolean, Float, Table
 from sqlalchemy.dialects.postgresql import ENUM, ARRAY
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import relationship, reconstructor
+from sqlalchemy.orm import relationship, reconstructor, Session
 
 from app.engine.convert import convert, to_normalized
 from app.extensions import db
+from app.models.Skill import Skill
 from app.models.Hint import TextHint, ScaleHint
 
 
@@ -178,3 +179,16 @@ class CurrencyQuestion(Question):
         return TextHint.create_unit_hint(self.from_unit, self.to_unit)
 
     __mapper_args__ = {'polymorphic_identity': 'questionCurrency'}
+
+
+# event listeners
+#
+# @db.event.listens_for(NumericQuestion, "after_insert")
+# def numeric_after_insert(mapper, connection, target):
+#     unit1, unit2 = min(target.from_unit, target.to_unit), max(target.from_unit, target.to_unit)
+#
+#     skill = db.session.query(Skill).filter_by(unit1=unit1, unit2=unit2).first()
+#     if skill is None:
+#         skill = Skill(unit1=unit1, unit2=unit2, )
+#
+#     target.skill = skill
