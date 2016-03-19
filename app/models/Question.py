@@ -42,6 +42,7 @@ class CloseEndedQuestion(Question):
     question_type = Column(String)
     #question_cz = Column(String)
     question_en = Column(String)
+    image_name = Column(String, nullable=True)
 
     answers = relationship('CloseEndedAnswer')  # max 3 answers !!
 

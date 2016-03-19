@@ -82,14 +82,18 @@ def load_closeended(file):
     for row in file:
         task_name = row[0]
 
-        if len(task_name) > 0 and len(row[3]) > 0 and task_name in tasks:
-            question = CloseEndedQuestion(difficulty=float(row[3].replace(',','.')), question_en=row[2], question_type=row[1], tasks=[tasks[task_name]])
+        if len(task_name) > 0 and len(row[4]) > 0 and task_name in tasks:
+            global question
+            if len(row[3]) > 0:
+                question = CloseEndedQuestion(difficulty=float(row[4].replace(',','.')), question_en=row[2], question_type=row[1], tasks=[tasks[task_name]], image_name=row[3])
+            else:
+                question = CloseEndedQuestion(difficulty=float(row[4].replace(',','.')), question_en=row[2], question_type=row[1], tasks=[tasks[task_name]])
             questions.append(question)
 
             for i in range(0,3):
-                value = row[4+i*3]
-                unit = row[5+i*3]
-                correct = row[6+i*3]
+                value = row[5+i*3]
+                unit = row[6+i*3]
+                correct = row[7+i*3]
 
                 if len(value) > 0 and len(unit) > 0 and len(correct) > 0:
                     questions.append(CloseEndedAnswer(question=question, value=value, unit=unit, correct=correct))

@@ -33,6 +33,13 @@ class QuestionSchema(Schema):
             data.get("hint")
         )
 
+    @staticmethod
+    def get_image_path(obj):
+        if obj.image_name:
+            return url_for('static', filename='tasks_img/'+obj.image_name+'.png')
+        else:
+            return None
+
 
 def question_schema_serialization_disambiguation(base_object, _):
     class_to_schema = {
@@ -61,6 +68,7 @@ class CloseEndedAnswerSchema(Schema):
 class CloseEndedQuestionSchema(QuestionSchema):
     question = fields.Method('get_question')
     answers = fields.Nested(CloseEndedAnswerSchema, many=True, attribute="answers")
+    imagePath = fields.Method("get_image_path")
 
     @staticmethod
     def get_question(obj):
@@ -82,13 +90,6 @@ class NumericQuestionSchema(QuestionSchema):
     toValue = fields.Float(attribute="to_value")
     tolerance = fields.Function(lambda obj: get_tolerance(obj.to_unit, obj.to_value))
     imagePath = fields.Method("get_image_path")
-
-    @staticmethod
-    def get_image_path(obj):
-        if obj.image_name:
-            return url_for('static', filename='tasks_img/'+obj.image_name+'.png')
-        else:
-            return None
 
 
 class ScaleQuestionSchema(QuestionSchema):
