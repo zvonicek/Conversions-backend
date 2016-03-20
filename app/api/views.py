@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, abort, request
 
+from app.engine import elo
 from app.engine.generator import generate_game
 from app.extensions import db
 from app.models import User, Task, TaskRun
@@ -42,11 +43,22 @@ def update_task_run():
 
     db.session.query(TaskRun).filter(TaskRun.id == data["id"]).update({"completed": not data["aborted"]})
 
+    updated_questions_ids = []
     for question in data["questions"]:
+        updated_questions_ids.append(question["id"])
+
         db.session.query(TaskRunQuestion).filter(TaskRunQuestion.taskrun_id == data["id"])\
             .filter(TaskRunQuestion.question_id == question["id"]) \
             .update({"correct": question["correct"], "time": question["time"], "hint_shown": question["hintShown"],
                      "answer": question["answer"]})
+
+    db.session.commit()
+
+    # TODO filter just questions that have null answer
+    updated_questions = TaskRunQuestion.query\
+        .filter(TaskRunQuestion.taskrun_id == data["id"], TaskRunQuestion.question_id.in_(updated_questions_ids)).all()
+    for question in updated_questions:
+        elo.update(question)
 
     db.session.commit()
 

@@ -8,9 +8,7 @@ from sqlalchemy.orm import relationship, reconstructor, Session
 
 from app.engine.convert import convert, to_normalized
 from app.extensions import db
-from app.models.Skill import Skill
-from app.models.Hint import TextHint, ScaleHint
-
+from .Hint import TextHint
 
 question_task_association = Table('question_task_association', db.Model.metadata,
                                   Column('question_id', Integer, ForeignKey('question.id')),
@@ -30,9 +28,15 @@ class Question(db.Model):
 
     tasks = relationship('Task', secondary=question_task_association, back_populates="questions")
     skill = relationship('Skill', back_populates='questions')
+    taskrun_questions = relationship('TaskRunQuestion', back_populates='question')
 
-    def expected_time(self) -> Optional[float]:
-        if self.target_time > 0:
+    def answered_times(self):
+        from app.models import TaskRunQuestion
+        return Question.query.join(TaskRunQuestion).filter(TaskRunQuestion.correct != None,
+                                                           TaskRunQuestion.question_id == self.id).count()
+
+    def expected_time(self, none_on_default=True) -> Optional[float]:
+        if self.target_time > 0 or not none_on_default:
             return math.exp(self.target_time)
         else:
             return None
