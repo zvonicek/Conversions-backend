@@ -53,22 +53,11 @@ class TaskRunQuestion(db.Model):
             .filter(TaskRunQuestion.taskrun_id != self.taskrun_id,
                     TaskRunQuestion.question_id == self.question_id,
                     TaskRun.user_id == self.taskrun.user_id,
-                    TaskRunQuestion.correct != None)\
+                    TaskRunQuestion.correct != None) \
             .count()
 
         return count == 0
 
-    # @classmethod
-    # def __declare_last__(cls):
-    #      trq = cls.__table__.alias()
-    #      cls_tr = aliased(TaskRun)
-    #
-    #      cls.is_first_attempt = column_property(select([func.count()])
-    #                                             .select_from(join(trq, TaskRun, trq.c.taskrun_id == TaskRun.id))
-    #                                             .select_from(join(cls, cls_tr, cls.taskrun_id == cls_tr.id))
-    #                                             .where((trq.c.taskrun_id != cls.taskrun_id) &
-    #                                                    (trq.c.question_id == cls.question_id) &
-    #                                                    (TaskRun.user_id == cls_tr.user_id)))
 
     def get_score(self) -> Optional[float]:
         """
