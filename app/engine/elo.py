@@ -26,10 +26,6 @@ def compute_difficulty_delta(response: float, expected_response: float, first_at
     K = ALPHA / (1 + DYNAMIC_ALPHA * (first_attempts_count - 1))
 
     delta = K * (expected_response - response)  # that is K * ((1 - response) - (1 - expected_response))
-
-#    if question_type == 't':
-#        delta = K * (response - expected_response)
-
     return delta
 
 

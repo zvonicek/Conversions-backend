@@ -27,6 +27,13 @@ class Skill(db.Model):
 
 class UserSkill(db.Model):
     __tablename__ = 'user_skill'
+
+    # workaround to set default value even before inserting to db
+    def __init__(self, **kwargs):
+        if 'value' not in kwargs:
+            kwargs['value'] = self.__table__.c.value.default.arg
+        super(UserSkill, self).__init__(**kwargs)
+
     skill_id = Column(Integer, ForeignKey('skill.id'), primary_key=True)
     user_id = Column(Integer, ForeignKey('user.id'), primary_key=True)
     value = Column(Float, default=0)

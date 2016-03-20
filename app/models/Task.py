@@ -104,8 +104,9 @@ class TaskRunQuestion(db.Model):
                 accuracy = 1
 
                 if 'answer' in self.answer and 'tolerance' in self.answer and 'correctAnswer' in self.answer:
+                    answer, tolerance, correctAnswer = float(self.answer["answer"]), float(self.answer["tolerance"]), float(self.answer["correctAnswer"])
                     # question has allowed tolerance, can adjust accuracy analyzing that
-                    accuracy = 1 - ((self.answer["correctAnswer"] - self.answer["answer"]) / self.answer["tolerance"])
+                    accuracy = 1 - ((correctAnswer - answer) / tolerance)
 
                 expected_time = self.question.expected_time(none_on_default=False)
                 global speed
