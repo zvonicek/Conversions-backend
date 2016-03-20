@@ -1,7 +1,7 @@
 import math
 from typing import Optional
 
-from sqlalchemy import Column, Integer, ForeignKey, String, Boolean, Float, Table
+from sqlalchemy import Column, Integer, ForeignKey, String, Boolean, Float, Table, func, distinct
 from sqlalchemy.dialects.postgresql import ENUM, ARRAY
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship, reconstructor, Session
@@ -34,6 +34,13 @@ class Question(db.Model):
         from app.models import TaskRunQuestion
         return Question.query.join(TaskRunQuestion).filter(TaskRunQuestion.correct != None,
                                                            TaskRunQuestion.question_id == self.id).count()
+
+    def answered_first_time_times(self):
+        from app.models import TaskRunQuestion, TaskRun
+        return Question.query.join(TaskRunQuestion).join(TaskRun)\
+            .filter(TaskRunQuestion.correct != None,
+                    TaskRunQuestion.question_id == self.id)\
+            .distinct(TaskRun.user_id).count()
 
     def expected_time(self, none_on_default=True) -> Optional[float]:
         if self.target_time > 0 or not none_on_default:

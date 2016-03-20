@@ -7,6 +7,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship, column_property, aliased
 
 from app.extensions import db
+from app.models.Skill import UserSkill
 from app.models.Question import question_task_association
 
 
@@ -47,9 +48,13 @@ class TaskRunQuestion(db.Model):
     question = relationship("Question")
 
     @hybrid_property
-    def is_users_first_attempt(self):
-        count = TaskRunQuestion.query\
-            .join(TaskRunQuestion.taskrun)\
+    def is_users_first_attempt(self) -> bool:
+        """
+        Checks whether the corresponding user answered to the corresponding question for the first time
+        """
+
+        count = TaskRunQuestion.query \
+            .join(TaskRunQuestion.taskrun) \
             .filter(TaskRunQuestion.taskrun_id != self.taskrun_id,
                     TaskRunQuestion.question_id == self.question_id,
                     TaskRun.user_id == self.taskrun.user_id,
@@ -58,10 +63,27 @@ class TaskRunQuestion(db.Model):
 
         return count == 0
 
+    def corresponding_skill(self) -> UserSkill:
+        """
+        Returns skill corresponding to the user and the question of the TaskRunQuestion
+        """
+
+        skill = UserSkill.query \
+            .join(UserSkill.skill) \
+            .filter(UserSkill.user_id == self.taskrun.user_id,
+                    UserSkill.skill_id == self.question.skill_id
+                    ) \
+            .first()
+
+        if skill is None:
+            skill = UserSkill(skill_id=self.question.skill_id, user_id=self.taskrun.user_id)
+            db.session.add(skill)
+
+        return skill
 
     def get_score(self) -> Optional[float]:
         """
-        Computes score of the answered question
+        Computes score of the answered question (how good the answer was)
         :return: score [0, 1] of the answer, null if question not answered yet
         """
 
@@ -93,7 +115,7 @@ class TaskRunQuestion(db.Model):
                     speed = SPEED_PENALTY_SLOPE ** ((self.time / expected_time) - 1)
 
                 print("speed: " + str(speed) + " accuracy:" + str(accuracy))
-                return 0.4 + 0.3*accuracy + 0.3*speed
+                return 0.4 + 0.3 * accuracy + 0.3 * speed
         else:
             # answer was not correct
             return 0
