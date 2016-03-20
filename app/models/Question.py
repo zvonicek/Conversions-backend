@@ -19,8 +19,7 @@ class Question(db.Model):
     __tablename__ = 'question'
     id = Column(Integer, primary_key=True)
     skill_id = Column(Integer, ForeignKey('skill.id'))
-    time_fast = Column(Integer, nullable=True)
-    time_neutral = Column(Integer, nullable=True)
+    target_time = Column(Float, nullable=True)
     difficulty = Column(Float, default=0)
     # answered_times = Column(Integer, default=0) -- do we need this for recommendation?
     implicit_hint = Column(ENUM('None', 'Text', 'Scale', name='implicit_hint'))
