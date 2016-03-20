@@ -53,7 +53,7 @@ class TaskRunQuestion(db.Model):
             .filter(TaskRunQuestion.taskrun_id != self.taskrun_id,
                     TaskRunQuestion.question_id == self.question_id,
                     TaskRun.user_id == self.taskrun.user_id,
-                    TaskRunQuestion.correct is not None)\
+                    TaskRunQuestion.correct != None)\
             .count()
 
         return count == 0
