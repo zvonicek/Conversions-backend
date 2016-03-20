@@ -12,6 +12,7 @@ class User(db.Model):
     language = Column(String)
 
     skills = relationship('UserSkill', back_populates="user")
+    taskruns = relationship('TaskRun', back_populates="user")
 
 
 class Skill(db.Model):
