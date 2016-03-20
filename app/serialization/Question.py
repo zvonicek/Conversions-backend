@@ -18,7 +18,7 @@ class UnitField(fields.Field):
 
 class QuestionSchema(Schema):
     id = fields.Int(dump_only=True)
-    targetTime = fields.Constant(10)  # temporary
+    targetTime = fields.Function(lambda obj: obj.expected_time())
     type = fields.String()
     hint = PolyField(serialization_schema_selector=task_schema_serialization_disambiguation)
 

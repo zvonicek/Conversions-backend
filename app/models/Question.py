@@ -1,3 +1,6 @@
+import math
+from typing import Optional
+
 from sqlalchemy import Column, Integer, ForeignKey, String, Boolean, Float, Table
 from sqlalchemy.dialects.postgresql import ENUM, ARRAY
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -19,7 +22,7 @@ class Question(db.Model):
     __tablename__ = 'question'
     id = Column(Integer, primary_key=True)
     skill_id = Column(Integer, ForeignKey('skill.id'))
-    target_time = Column(Float, nullable=True)
+    target_time = Column(Float, default=0)
     difficulty = Column(Float, default=0)
     # answered_times = Column(Integer, default=0) -- do we need this for recommendation?
     implicit_hint = Column(ENUM('None', 'Text', 'Scale', name='implicit_hint'))
@@ -27,6 +30,12 @@ class Question(db.Model):
 
     tasks = relationship('Task', secondary=question_task_association, back_populates="questions")
     skill = relationship('Skill', back_populates='questions')
+
+    def expected_time(self) -> Optional[float]:
+        if self.target_time > 0:
+            return math.exp(self.target_time)
+        else:
+            return None
 
     __mapper_args__ = {
         'polymorphic_identity': 'question',
