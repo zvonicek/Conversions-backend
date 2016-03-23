@@ -1,0 +1,78 @@
+task;type;question_en;image_name;difficulty;a1_value;a1_unit;a1_correct;a2_value;a2_unit;a2_correct;a3_value;a3_unit;a3_correct
+length_m;estimate_length;mobile phone;;0;15;dm;false;15;m;false;15;cm;true
+length_m;estimate_height;11-story building;;0;40;m;true;40;cm;false;;;
+length_m;estimate_length;bed;;0;2;cm;false;2;m;true;2;dm;false
+length_m;estimate_length;screwdriver;;0;15;m;false;15;cm;true;;;
+length_m;estimate_height;basketball player;;0;2;m;true;2;dm;false;;;
+length_m;estimate_length;car;car;0;4;mm;false;4;m;true;;;
+length_m;estimate_length;envelope;;0;28;m;false;28;cm;true;;;
+length_m;estimate_height;room;;0;3;dm;false;3;km;false;3;m;true
+length_m;estimate_length;credit card;;0;8;dm;false;8;cm;true;;;
+length_m;estimate_height;can of coke;;0;12;mm;false;12;cm;true;;;
+length_m;estimate_length;loaf of bread;;0;3;dm;true;3;cm;false;;;
+length_m;estimate_height;electric power pole;;0;12;m;true;12;mm;false;;;
+length_m;estimate_length;airplane;;0;460;dm;true;460;m;false;;;
+length_m;estimate_height;mug;;0;180;mm;true;180;cm;false;;;
+length_m;estimate_length;tooth;;0;2;dm;false;2;cm;true;;;
+length_m;estimate_distance;between two cities;;0;30;km;true;30;m;false;;;
+length_m;estimate_distance;between two cities;;0;30;km;true;30;mm;false;30;dm;false
+length_m;estimate_distance;to nearest shop;;0;300;m;true;100;km;false;;;
+length_m;estimate_length;guitar;;0;1;m;true;1;dm;false;;;
+length_m;estimate_length;guitar;;0;100;cm;true;100;m;false;;;
+length_m;estimate_thick;credit card;;0;1;cm;false;1;mm;true;;;
+length_m;estimate_thick;credit card;;0;1;dm;false;1;mm;true;;;
+length_m;compare;Which is more?;;0;14;mm;true;1;cm;false;;;
+length_m;compare;Which is more?;;0;1;km;true;680;m;false;;;
+length_m;compare;Which is more?;;0;12;dm;true;100;cm;false;;;
+length_m;compare;Which is more?;;0;1;m;false;1500;mm;true;;;
+;;;;;;;;;;;;;
+length_i;estimate_length;fire truck;;0;12;in;false;27;ft;true;;;
+length_i;estimate_height;stairstep;;0;9;ft;false;9;in;true;;;
+length_i;estimate_length;envelope;;0;1;in;false;1;ft;true;;;
+length_i;estimate_height;dog;;0;1;ft;true;1;in;false;;;
+length_i;estimate_length;toothbrush;;0;7;in;true;7;yd;false;;;
+length_i;estimate_length;loaf of bread;;0;12;ft;false;12;in;true;;;
+length_i;estimate_height;ketchup bottle;;0;10;in;true;10;yd;false;;;
+length_i;estimate_height;car;;0;5;in;false;5;ft;true;;;
+length_i;estimate_height;bicycle;;0,4;3;yd;false;10;in;false;1;yd;true
+length_i;estimate_height;hammer;;0,6;1;in;false;16;in;true;4;in;false
+length_i;estimate_height;tree;;0,1;6;yd;true;1;mi;false;4;ft;false
+length_i;estimate_length;skateboard;;0,4;2;yd;false;12;in;false;30;in;true
+length_i;estimate_length;slice of bread;;0,1;4;ft;false;4;in;true;2;yd;false
+length_i;estimate_height;mountain;;0;2;mi;true;2;ft;false;2;yd;false
+length_i;estimate_height;tennis ball;;0,5;1;ft;false;7;in;false;3;in;true
+length_i;estimate_height;lollipop;;0,5;3;in;false;5;in;true;1;ft;false
+length_i;estimate_height;11-story building;;0;11;ft;false;11;yd;false;100;ft;true
+length_i;estimate_distance;between two cities;;0;20;mi;true;50;yd;false;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
+;;;;;;;;;;;;;
