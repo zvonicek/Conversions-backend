@@ -33,6 +33,8 @@ def initdb():
     db.drop_all()
     db.create_all()
 
+    # create tasks
+
     task1 = Task(identifier='mass_m', name='Mass - Metric')
     task2 = Task(identifier='mass_i', name='Mass - Im.perial')
     task3 = Task(identifier='mass_c', name='Mass - Combined')
@@ -54,6 +56,38 @@ def initdb():
         task8,
         task9
     ])
+
+    # create test data
+
+    test_task = Task(identifier='test', name='Test')
+    sortA1 = SortAnswer(value="100", unit="cm", presented_pos=0)
+    sortA2 = SortAnswer(value="200", unit="dm", presented_pos=1)
+    sortA3 = SortAnswer(value="2", unit="m", presented_pos=2)
+    sortA4 = SortAnswer(value="3500", unit="mm", presented_pos=3)
+    closeA1 = CloseEndedAnswer(value="15", unit="dm", correct=False)
+    closeA2 = CloseEndedAnswer(value="15", unit="m", correct=False)
+    closeA3 = CloseEndedAnswer(value="15", unit="cm", correct=True)
+    closeA4 = CloseEndedAnswer(value="15", unit="m", correct=False)
+    closeA5 = CloseEndedAnswer(value="15", unit="cm", correct=True)
+
+    db.session.add_all([
+        test_task,
+        NumericQuestion(from_value=5, from_unit="m", to_unit="cm", tasks=[test_task], image_name="car"),
+        NumericQuestion(from_value=5, from_unit="m", to_unit="cm", tasks=[test_task]),
+        sortA1,
+        sortA2,
+        sortA3,
+        sortA4,
+        SortQuestion(dimensionality="length", order="asc", answers=[sortA1, sortA2, sortA3, sortA4], tasks=[test_task]),
+        closeA1,
+        closeA2,
+        closeA3,
+        CloseEndedQuestion(question_en="What's better estimate for the length of a mobile phone", answers=[closeA1, closeA2, closeA3], tasks=[test_task]),
+        CloseEndedQuestion(question_en="What's better estimate for the length of a mobile phone",
+                           answers=[closeA4, closeA5], tasks=[test_task], image_name="car"),
+        CurrencyQuestion(from_value=300, from_unit="CZK", to_unit="EUR", tasks=[test_task]),
+    ])
+
     db.session.commit()
 
 
