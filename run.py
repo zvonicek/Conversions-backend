@@ -86,6 +86,7 @@ def initdb():
         CloseEndedQuestion(question_en="What's better estimate for the length of a mobile phone",
                            answers=[closeA4, closeA5], tasks=[test_task], image_name="car"),
         CurrencyQuestion(from_value=300, from_unit="CZK", to_unit="EUR", tasks=[test_task]),
+        ScaleQuestion(scale_min=0, scale_max=4000, from_value=1, from_unit="mi", to_unit="yd", tasks=[test_task]),
     ])
 
     db.session.commit()
