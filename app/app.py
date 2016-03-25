@@ -5,7 +5,7 @@ from flask import Flask, request, render_template
 
 from app import extensions
 from .api import api
-from .extensions import db, cache
+from .extensions import db, cache, compress
 from .config import DevelopmentConfig
 
 # For import *
@@ -52,6 +52,8 @@ def configure_extensions(app):
 
     app.logger.addHandler(logging.StreamHandler())
     app.logger.setLevel(logging.INFO)
+
+    compress.init_app(app)
 
 
 def configure_blueprints(app, blueprints):
