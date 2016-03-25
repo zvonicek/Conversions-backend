@@ -10,19 +10,10 @@ class User(db.Model):
     uuid = Column(String)
     app_version = Column(String)
     language = Column(String)
+    skill_value = Column(Float, default=0)
 
     skills = relationship('UserSkill', back_populates="user")
     taskruns = relationship('TaskRun', back_populates="user")
-
-
-class Skill(db.Model):
-    __tablename = 'skill'
-    id = Column(Integer, primary_key=True)
-    unit1 = Column(String)
-    unit2 = Column(String)
-
-    users = relationship('UserSkill', back_populates="skill")
-    questions = relationship('Question', back_populates="skill")
 
 
 class UserSkill(db.Model):
@@ -34,9 +25,9 @@ class UserSkill(db.Model):
             kwargs['value'] = self.__table__.c.value.default.arg
         super(UserSkill, self).__init__(**kwargs)
 
-    skill_id = Column(Integer, ForeignKey('skill.id'), primary_key=True)
+    task_id = Column(Integer, ForeignKey('task.id'), primary_key=True)
     user_id = Column(Integer, ForeignKey('user.id'), primary_key=True)
     value = Column(Float, default=0)
 
-    skill = relationship('Skill')
+    task = relationship('Task')
     user = relationship('User')

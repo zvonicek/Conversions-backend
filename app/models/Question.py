@@ -19,7 +19,6 @@ question_task_association = Table('question_task_association', db.Model.metadata
 class Question(db.Model):
     __tablename__ = 'question'
     id = Column(Integer, primary_key=True)
-    skill_id = Column(Integer, ForeignKey('skill.id'))
     target_time = Column(Float, default=0)
     difficulty = Column(Float, default=0)
     # answered_times = Column(Integer, default=0) -- do we need this for recommendation?
@@ -27,7 +26,6 @@ class Question(db.Model):
     type = Column(String(50))
 
     tasks = relationship('Task', secondary=question_task_association, back_populates="questions")
-    skill = relationship('Skill', back_populates='questions')
     taskrun_questions = relationship('TaskRunQuestion', back_populates='question')
 
     def answered_times(self):

@@ -69,14 +69,13 @@ class TaskRunQuestion(db.Model):
         """
 
         skill = UserSkill.query \
-            .join(UserSkill.skill) \
             .filter(UserSkill.user_id == self.taskrun.user_id,
-                    UserSkill.skill_id == self.question.skill_id
+                    UserSkill.task_id == self.taskrun.task_id
                     ) \
             .first()
 
         if skill is None:
-            skill = UserSkill(skill_id=self.question.skill_id, user_id=self.taskrun.user_id)
+            skill = UserSkill(task_id=self.taskrun.task_id, user_id=self.taskrun.user_id)
             db.session.add(skill)
 
         return skill

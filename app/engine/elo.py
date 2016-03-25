@@ -55,6 +55,8 @@ def update(question_run: TaskRunQuestion):
 
     user_skill.value += user_skill_delta
 
+    # TODO - update also glbal skill
+
     # update question difficuilty
     if question_run.is_users_first_attempt:
         # update only on first attempt, otherwase it may be influenced by learning

@@ -20,15 +20,6 @@ def get_tasks():
     return tasks_dict
 
 
-def get_skill(unit1, unit2):
-    unit1, unit2 = min(unit1, unit2), max(unit1, unit2)
-
-    skill = db.session.query(Skill).filter_by(unit1=unit1, unit2=unit2).first()
-    if skill is None:
-        skill = Skill(unit1=unit1, unit2=unit2, )
-    return skill
-
-
 def load_numeric(file):
     tasks = get_tasks()
     questions = []
@@ -43,7 +34,6 @@ def load_numeric(file):
             else:
                 question = NumericQuestion(difficulty=float(row[1].replace(',','.')), from_value=float(row[2].replace(',','.')), from_unit=row[3], to_unit=row[4], tasks=[tasks[task_name]])
 
-            question.skill = get_skill(question.from_unit, question.to_unit)
             questions.append(question)
 
     db.session.add_all(questions)
@@ -82,7 +72,6 @@ def load_scale(file):
 
         if len(task_name) > 0 and task_name in tasks:
             question = ScaleQuestion(difficulty=float(row[1].replace(',','.')), from_value=float(row[2].replace(',','.')), from_unit=row[3], to_unit=row[4], scale_min=float(row[5].replace(',','.')), scale_max=float(row[6].replace(',','.')), tasks=[tasks[task_name]])
-            question.skill = get_skill(question.from_unit, question.to_unit)
             questions.append(question)
 
     db.session.add_all(questions)
