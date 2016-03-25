@@ -77,7 +77,7 @@ class CloseEndedQuestionSchema(QuestionSchema):
             return "Which is a better estimate for the length of a {}?".format(obj.question_en)
         elif obj.question_type == "estimate_distance":
             return "Which is a better estimate for the distance {}?".format(obj.question_en)
-        elif obj.question_type == "compare":
+        else:
             return obj.question_en
 
 # numeric
@@ -133,7 +133,7 @@ class CurrencySchema(QuestionSchema):
     fromCurrency = UnitField(attribute="from_unit")
     toCurrency = UnitField(attribute="to_unit")
     toValue = fields.Float(attribute="to_value")
-    tolerance = fields.Function(lambda obj: get_tolerance(obj.task, obj.to_value))
+    tolerance = fields.Function(lambda obj: get_tolerance(obj.to_unit, obj.to_value))
     availableNotes = fields.Method("get_available_notes")
     correctNotes = fields.Method("get_correct_notes")
 

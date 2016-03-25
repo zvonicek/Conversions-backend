@@ -13,7 +13,8 @@ def generate_game(task: Task, user: User) -> TaskRun:
     :return: freshly generated game
     """
 
-    taskrun = TaskRun(task=task, user=user, questions=choose_questions(task, user, 5))
+    # TODO first game will have just 5 questions
+    taskrun = TaskRun(task=task, user=user, questions=choose_questions(task, user, 10))
     db.session.add(taskrun)
     db.session.commit()
     return taskrun
@@ -38,9 +39,10 @@ def choose_questions(task: Task, user: User, number: int) -> [TaskRunQuestion]:
         random.shuffle(questions)
         questions.sort(key=lambda k: question_priority(k, user, choosen_types_counts), reverse=True)
 
-        choosen_questions.append(TaskRunQuestion(question=questions[0], position=i))
-        choosen_types_counts[questions[0].type] = choosen_types_counts.get(questions[0].type, 0) + 1
-        questions = questions[1:]
+        if len(questions) > 0:
+            choosen_questions.append(TaskRunQuestion(question=questions[0], position=i))
+            choosen_types_counts[questions[0].type] = choosen_types_counts.get(questions[0].type, 0) + 1
+            questions = questions[1:]
 
     return choosen_questions
 
