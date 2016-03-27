@@ -24,6 +24,7 @@ def start():
 
     user.app_version = request.args.get('version')
     user.language = request.args.get('language')
+    user.is_metric = request.args.get('metric')
     db.session.commit()
 
     task = Task.query.filter_by(identifier=request.args.get('task')).first()

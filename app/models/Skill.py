@@ -10,6 +10,7 @@ class User(db.Model):
     uuid = Column(String)
     app_version = Column(String)
     language = Column(String)
+    is_metric = Column(Boolean, nullable=True)
     skill_value = Column(Float, default=0)
 
     skills = relationship('UserSkill', back_populates="user")
