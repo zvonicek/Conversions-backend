@@ -60,20 +60,22 @@ def initdb():
     # create test data
 
     test_task = Task(identifier='test', name='Test')
-    sortA1 = SortAnswer(value="100", unit="cm", presented_pos=0)
-    sortA2 = SortAnswer(value="200", unit="dm", presented_pos=1)
-    sortA3 = SortAnswer(value="2", unit="m", presented_pos=2)
-    sortA4 = SortAnswer(value="3500", unit="mm", presented_pos=3)
-    closeA1 = CloseEndedAnswer(value="15", unit="dm", correct=False)
-    closeA2 = CloseEndedAnswer(value="15", unit="m", correct=False)
-    closeA3 = CloseEndedAnswer(value="15", unit="cm", correct=True)
-    closeA4 = CloseEndedAnswer(value="15", unit="m", correct=False)
-    closeA5 = CloseEndedAnswer(value="15", unit="cm", correct=True)
+    sortA1 = SortAnswer(value="36", unit="in", presented_pos=0)
+    sortA2 = SortAnswer(value="1", unit="ft", presented_pos=1)
+    sortA3 = SortAnswer(value="12", unit="m", presented_pos=2)
+    sortA4 = SortAnswer(value="1", unit="km", presented_pos=3)
+    closeA1 = CloseEndedAnswer(value="3", unit="yd", correct=False)
+    closeA2 = CloseEndedAnswer(value="10", unit="in", correct=False)
+    closeA3 = CloseEndedAnswer(value="1", unit="yd", correct=True)
+    closeA4 = CloseEndedAnswer(value="1", unit="yd", correct=True)
+    closeA5 = CloseEndedAnswer(value="11", unit="cm", correct=False)
 
     db.session.add_all([
         test_task,
-        NumericQuestion(from_value=5, from_unit="m", to_unit="cm", tasks=[test_task], image_name="car"),
-        NumericQuestion(from_value=5, from_unit="m", to_unit="cm", tasks=[test_task]),
+        ScaleQuestion(scale_min=0, scale_max=10, from_value=6, from_unit="lb", to_unit="kg", tasks=[test_task]),
+        CurrencyQuestion(from_value=300, from_unit="CZK", to_unit="EUR", tasks=[test_task]),
+        NumericQuestion(from_value=5, from_unit="m", to_unit="ft", tasks=[test_task], image_name="car"),
+        NumericQuestion(from_value=5, from_unit="m", to_unit="ft", tasks=[test_task]),
         sortA1,
         sortA2,
         sortA3,
@@ -82,11 +84,9 @@ def initdb():
         closeA1,
         closeA2,
         closeA3,
-        CloseEndedQuestion(question_en="What's better estimate for the length of a mobile phone", answers=[closeA1, closeA2, closeA3], tasks=[test_task]),
-        CloseEndedQuestion(question_en="What's better estimate for the length of a mobile phone",
-                           answers=[closeA4, closeA5], tasks=[test_task], image_name="car"),
-        CurrencyQuestion(from_value=300, from_unit="CZK", to_unit="EUR", tasks=[test_task]),
-        ScaleQuestion(scale_min=0, scale_max=4000, from_value=1, from_unit="mi", to_unit="yd", tasks=[test_task]),
+        CloseEndedQuestion(question_en="bicycle", question_type="estimate_height", answers=[closeA1, closeA2, closeA3], tasks=[test_task]),
+        CloseEndedQuestion(question_en="bicycle", question_type="estimate_height",
+                           answers=[closeA4, closeA5], tasks=[test_task], image_name="bicycle"),
     ])
 
     db.session.commit()
