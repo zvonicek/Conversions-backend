@@ -24,6 +24,7 @@ class Question(db.Model):
     # answered_times = Column(Integer, default=0) -- do we need this for recommendation?
     implicit_hint = Column(ENUM('None', 'Text', 'Scale', name='implicit_hint'))
     type = Column(String(50))
+    enabled = Column(Boolean, default=True)
 
     tasks = relationship('Task', secondary=question_task_association, back_populates="questions")
     taskrun_questions = relationship('TaskRunQuestion', back_populates='question')
