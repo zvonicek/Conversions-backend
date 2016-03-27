@@ -59,7 +59,7 @@ class CloseEndedQuestion(Question):
     __tablename__ = 'question_closeEnded'
     id = Column(Integer, ForeignKey('question.id'), primary_key=True)
     question_type = Column(String)
-    #question_cz = Column(String)
+    question_cz = Column(String)
     question_en = Column(String)
     image_name = Column(String, nullable=True)
 

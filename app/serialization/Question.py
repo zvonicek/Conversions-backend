@@ -77,6 +77,10 @@ class CloseEndedQuestionSchema(QuestionSchema):
             return "Which is a better estimate for the length of a {}?".format(obj.question_en)
         elif obj.question_type == "estimate_distance":
             return "Which is a better estimate for the distance {}?".format(obj.question_en)
+        elif obj.question_type == "estimate_area":
+            return "{} has an area of about".format(obj.question_en)
+        elif obj.question_type == "estimate_temperature":
+            return "What is the temperature of a {}?".format(obj.question_en)
         else:
             return obj.question_en
 
