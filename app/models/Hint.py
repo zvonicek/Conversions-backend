@@ -31,6 +31,9 @@ class ScaleHint(Hint):
 
     @classmethod
     def create_unit_hint(cls, from_unit, to_unit):
+        if from_unit == "degC" or to_unit == "degF":
+            return None
+
         global converted_value
         converted_value = convert(from_unit, 1, to_unit).magnitude
         if converted_value < 1:
@@ -49,6 +52,9 @@ class TextHint(Hint):
 
     @classmethod
     def create_unit_hint(cls, from_unit, to_unit):
+        if from_unit == "degC" or to_unit == "degF":
+            return None
+
         converted_value = convert(from_unit, 1, to_unit)
 
         if converted_value.magnitude > 0.001:

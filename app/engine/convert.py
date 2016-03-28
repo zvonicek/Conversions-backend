@@ -89,11 +89,11 @@ def format_number(number):
     return "{0:.3f}".format(number).rstrip('0').rstrip('.')
 
 
-def format_quantity_unit(quantity):
+def format_quantity_unit(unit):
     """
     Format unit to printable string (eg. "meter")
-    :param quantity: quantity object
-    :type quantity: Pint.Quantity
+    :param unit: unit object
+    :type unit: Pint.Unit
     :return: formated quantity string (eg. "meter")
     :rtype: String
     """
@@ -101,9 +101,9 @@ def format_quantity_unit(quantity):
     outputs = {"degC": "°C", "degF": "°F", "yd2": "square yard", "mi2": "square mile", "ft2": "square foot",
                "cm2": "square centimeter", "dm2": "square decimeter", "m2": "square meter",
                "km2": "square kilometer"}
-    unit = outputs.get('{:C}'.format(quantity.units), '{:P}'.format(quantity.units))
+    unit_string = outputs.get('{:C}'.format(unit), '{:P}'.format(unit))
 
-    return unit
+    return unit_string
 
 
 def format_unit(unit):
@@ -128,7 +128,7 @@ def format_quantity(quantity):
     :rtype: String
     """
 
-    return "{0} {1}".format(format_number(quantity.magnitude), format_quantity_unit(quantity))
+    return "{0} {1}".format(format_number(quantity.magnitude), format_quantity_unit(quantity.units))
 
 
 def format_value(unit_from, value_from):
