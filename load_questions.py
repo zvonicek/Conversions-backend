@@ -91,7 +91,7 @@ def load_closeended(file):
             if len(row[4]) > 0:
                 question = CloseEndedQuestion(difficulty=float(row[5].replace(',','.')), question_cz=row[2], question_en=row[3], question_type=row[1], tasks=[tasks[task_name]], image_name=row[4])
             else:
-                question = CloseEndedQuestion(difficulty=float(row[5].replace(',','.')), question_cz=row[2], question_en=row[3], tasks=[tasks[task_name]])
+                question = CloseEndedQuestion(difficulty=float(row[5].replace(',','.')), question_cz=row[2], question_en=row[3], question_type=row[1], tasks=[tasks[task_name]])
             questions.append(question)
 
             # check if question can be assigned as a dependent question to 'combined' task

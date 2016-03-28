@@ -98,9 +98,9 @@ def format_quantity_unit(quantity):
     :rtype: String
     """
 
-    outputs = {"degC": "°C", "degF": "°F", "square_yard": "square yard", "square_mile": "square mile", "square_foot": "square foot",
-               "centimeter**2": "square centimeter", "decimeter**2": "square decimeter", "meter**2": "square meter",
-               "kilometer**2": "square kilometer"}
+    outputs = {"degC": "°C", "degF": "°F", "yd2": "square yard", "mi2": "square mile", "ft2": "square foot",
+               "cm2": "square centimeter", "dm2": "square decimeter", "m2": "square meter",
+               "km2": "square kilometer"}
     unit = outputs.get('{:C}'.format(quantity.units), '{:P}'.format(quantity.units))
 
     return unit
