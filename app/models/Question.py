@@ -10,10 +10,15 @@ from app.engine.convert import convert, to_normalized
 from app.extensions import db
 from .Hint import TextHint
 
-question_task_association = Table('question_task_association', db.Model.metadata,
-                                  Column('question_id', Integer, ForeignKey('question.id')),
-                                  Column('task_id', Integer, ForeignKey('task.id')),
-                                  )
+
+class QuestionTaskAssociation(db.Model):
+    __tablename__ = 'question_task_association'
+    question_id = Column(Integer, ForeignKey('question.id'), primary_key=True)
+    task_id = Column(Integer, ForeignKey('task.id'), primary_key=True)
+    unit_system_constraint = Column(ENUM('metric', 'imperial', name='unit_system_constraint'), nullable=True)
+
+    question = relationship('Question', back_populates='task_associations')
+    task = relationship('Task')
 
 
 class Question(db.Model):
@@ -26,7 +31,8 @@ class Question(db.Model):
     type = Column(String(50))
     enabled = Column(Boolean, default=True)
 
-    tasks = relationship('Task', secondary=question_task_association, back_populates="questions")
+    task_associations = relationship('QuestionTaskAssociation')
+    tasks = relationship('Task', secondary='question_task_association', back_populates="questions")
     taskrun_questions = relationship('TaskRunQuestion', back_populates='question')
 
     def answered_times(self):
@@ -72,7 +78,7 @@ class CloseEndedAnswer(db.Model):
     __tablename__ = 'answer_closeEnded'
     id = Column(Integer, primary_key=True)
     question_id = Column(Integer, ForeignKey("question_closeEnded.id"))
-    value = Column(Integer)  # eg. 10
+    value = Column(Float)  # eg. 10
     unit = Column(String)  # eg. cm
     correct = Column(Boolean)
 
@@ -84,7 +90,7 @@ class CloseEndedAnswer(db.Model):
 class NumericQuestion(Question):
     __tablename__ = 'question_numeric'
     id = Column(Integer, ForeignKey('question.id'), primary_key=True)
-    from_value = Column(Integer)  # eg. 10
+    from_value = Column(Float)  # eg. 10
     from_unit = Column(String)  # eg. cm
     to_unit = Column(String)   # eg. m
     image_name = Column(String, nullable=True)
@@ -107,7 +113,7 @@ class ScaleQuestion(Question):
     id = Column(Integer, ForeignKey('question.id'), primary_key=True)
     scale_min = Column(Float)
     scale_max = Column(Float)
-    from_value = Column(Integer)  # eg. 10
+    from_value = Column(Float)  # eg. 10
     from_unit = Column(String)  # eg. cm
     to_unit = Column(String)   # eg. m
 
@@ -166,7 +172,7 @@ class SortAnswer(db.Model):
     __tablename__ = 'answer_sort'
     id = Column(Integer, primary_key=True)
     question_id = Column(Integer, ForeignKey("question_sort.id"))
-    value = Column(Integer)  # eg. 10
+    value = Column(Float)  # eg. 10
     unit = Column(String)  # eg. cm
     presented_pos = Column(Integer)
     correct_pos = None
@@ -183,7 +189,7 @@ class CurrencyQuestion(Question):
     __tablename__ = 'question_currency'
     id = Column(Integer, ForeignKey('question.id'), primary_key=True)
 
-    from_value = Column(Integer)  # eg. 10
+    from_value = Column(Float)  # eg. 10
     from_unit = Column(String)  # eg. CZK
     to_unit = Column(String)   # eg. EUR
     # available_notes = Column(ARRAY(Integer, dimensions=2)) # (100, 4), (20, 1) -- 100,- 4x, 20,- 1x

@@ -5,6 +5,7 @@ from app.app import create_app
 from app.config import config
 from app.models import *
 from app.extensions import db
+from app.models.Question import QuestionTaskAssociation
 
 app = create_app(config)
 db.init_app(app)
@@ -85,21 +86,29 @@ def load_closeended(file):
     for row in file:
         task_name = row[0]
 
-        if len(task_name) > 0 and len(row[4]) > 0 and task_name in tasks:
+        if len(task_name) > 0 and len(row[5]) > 0 and task_name in tasks:
             global question
-            if len(row[3]) > 0:
-                question = CloseEndedQuestion(difficulty=float(row[4].replace(',','.')), question_en=row[2], question_type=row[1], tasks=[tasks[task_name]], image_name=row[3])
+            if len(row[4]) > 0:
+                question = CloseEndedQuestion(difficulty=float(row[5].replace(',','.')), question_cz=row[2], question_en=row[3], question_type=row[1], tasks=[tasks[task_name]], image_name=row[4])
             else:
-                question = CloseEndedQuestion(difficulty=float(row[4].replace(',','.')), question_en=row[2], question_type=row[1], tasks=[tasks[task_name]])
+                question = CloseEndedQuestion(difficulty=float(row[5].replace(',','.')), question_cz=row[2], question_en=row[3], tasks=[tasks[task_name]])
             questions.append(question)
 
+            # check if question can be assigned as a dependent question to 'combined' task
+            q_type = row[1].split("_")
+            q_task = task_name.split("_")
+            if q_type[0] == "estimate" and len(q_task) == 2 and (q_task[1] == "m" or q_task[1] == "i") and tasks[q_task[0]+"_c"]:
+                unit = "metric" if q_task[1] == "m" else "imperial"
+                task = tasks[q_task[0]+"_c"]
+                question.task_associations.append(QuestionTaskAssociation(task=task, unit_system_constraint=unit))
+
             for i in range(0,3):
-                value = row[5+i*3]
-                unit = row[6+i*3]
-                correct = row[7+i*3]
+                value = row[6+i*3]
+                unit = row[7+i*3]
+                correct = row[8+i*3]
 
                 if len(value) > 0 and len(unit) > 0 and len(correct) > 0:
-                    questions.append(CloseEndedAnswer(question=question, value=value, unit=unit, correct=correct))
+                    questions.append(CloseEndedAnswer(question=question, value=float(value.replace(',','.')), unit=unit, correct=correct))
 
     db.session.add_all(questions)
     db.session.commit()

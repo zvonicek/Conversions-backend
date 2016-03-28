@@ -1,14 +1,14 @@
 import datetime
 from typing import Optional
 
-from sqlalchemy import Column, Integer, ForeignKey, String, DateTime, Boolean, Float, select, func, join
+from sqlalchemy import Column, Integer, ForeignKey, String, DateTime, Boolean, Float, select, func, join, sql
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship, column_property, aliased
 
 from app.extensions import db
+from app.models.Question import QuestionTaskAssociation, Question
 from app.models.Skill import UserSkill
-from app.models.Question import question_task_association
 
 
 class Task(db.Model):
@@ -18,7 +18,24 @@ class Task(db.Model):
     name = Column(String)
 
     task_runs = relationship("TaskRun", back_populates="task")
-    questions = relationship('Question', secondary=question_task_association, back_populates="tasks")
+    questions = relationship('Question', secondary='question_task_association', back_populates="tasks")
+
+    # questions_m and questions_i are relationshipts to questions that filters only universal questions
+    # (unit_system_constraint == None) and questions that involves solely metric (_m) or imperial (_i) conversions.
+    # This is particularly the case in CloseEnded questions in combination with "combined" task where we want to decide
+    # upon the user's native unit system if present metric or imperial questions (so if having metric, show imperial
+    # questions like 'estimate eight of a tea cup' with answers in imperial and vice versa)
+    questions_m = relationship('Question', secondary='question_task_association',
+                               secondaryjoin=sql.and_(QuestionTaskAssociation.question_id == Question.id,
+                                                      sql.or_(QuestionTaskAssociation.unit_system_constraint == "metric",
+                                                              QuestionTaskAssociation.unit_system_constraint == None)
+                                                      ))
+    questions_i = relationship('Question', secondary='question_task_association',
+                               secondaryjoin=sql.and_(QuestionTaskAssociation.question_id == Question.id,
+                                                      sql.or_(
+                                                          QuestionTaskAssociation.unit_system_constraint == "imperial",
+                                                          QuestionTaskAssociation.unit_system_constraint == None)
+                                                      ))
 
 
 class TaskRun(db.Model):
@@ -103,7 +120,8 @@ class TaskRunQuestion(db.Model):
                 accuracy = 1
 
                 if 'answer' in self.answer and 'tolerance' in self.answer and 'correctAnswer' in self.answer:
-                    answer, tolerance, correctAnswer = float(self.answer["answer"]), float(self.answer["tolerance"]), float(self.answer["correctAnswer"])
+                    answer, tolerance, correctAnswer = float(self.answer["answer"]), float(
+                        self.answer["tolerance"]), float(self.answer["correctAnswer"])
                     # question has allowed tolerance, can adjust accuracy analyzing that
                     accuracy = 1 - ((correctAnswer - answer) / tolerance)
 

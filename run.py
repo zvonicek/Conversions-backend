@@ -41,9 +41,8 @@ def initdb():
     task4 = Task(identifier='length_m', name='Length - Metric')
     task5 = Task(identifier='length_i', name='Length - Imperial')
     task6 = Task(identifier='length_c', name='Length - Combined')
-    task7 = Task(identifier='area_m', name='Area - Metric')
-    task8 = Task(identifier='area_i', name='Area - Imperial')
-    task9 = Task(identifier='area_c', name='Area - Combined')
+    task7 = Task(identifier='area', name='Area')
+    task8 = Task(identifier='temperature', name='Temperature')
 
     db.session.add_all([
         task1,
@@ -53,8 +52,7 @@ def initdb():
         task5,
         task6,
         task7,
-        task8,
-        task9
+        task8
     ])
 
     # create test data
