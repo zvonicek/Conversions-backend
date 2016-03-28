@@ -197,16 +197,3 @@ class CurrencyQuestion(Question):
         return TextHint.create_unit_hint(self.from_unit, self.to_unit)
 
     __mapper_args__ = {'polymorphic_identity': 'questionCurrency'}
-
-
-# event listeners
-#
-# @db.event.listens_for(NumericQuestion, "after_insert")
-# def numeric_after_insert(mapper, connection, target):
-#     unit1, unit2 = min(target.from_unit, target.to_unit), max(target.from_unit, target.to_unit)
-#
-#     skill = db.session.query(Skill).filter_by(unit1=unit1, unit2=unit2).first()
-#     if skill is None:
-#         skill = Skill(unit1=unit1, unit2=unit2, )
-#
-#     target.skill = skill
