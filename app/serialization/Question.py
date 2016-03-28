@@ -81,6 +81,10 @@ class CloseEndedQuestionSchema(QuestionSchema):
             return "{} has an area of about".format(obj.question_en)
         elif obj.question_type == "estimate_temperature":
             return "What is the temperature of a {}?".format(obj.question_en)
+        elif obj.question_type == "estimate_thick":
+            return "Which is a better estimate for the thick of a {}?".format(obj.question_en)
+        elif obj.question_type == "estimate_weight":
+            return "Which is a better estimate for the weight of a {}?".format(obj.question_en)
         else:
             return obj.question_en
 
