@@ -35,24 +35,17 @@ def initdb():
 
     # create tasks
 
-    task1 = Task(identifier='mass_m', name='Mass - Metric')
-    task2 = Task(identifier='mass_i', name='Mass - Im.perial')
-    task3 = Task(identifier='mass_c', name='Mass - Combined')
-    task4 = Task(identifier='length_m', name='Length - Metric')
-    task5 = Task(identifier='length_i', name='Length - Imperial')
-    task6 = Task(identifier='length_c', name='Length - Combined')
-    task7 = Task(identifier='area', name='Area')
-    task8 = Task(identifier='temperature', name='Temperature')
-
     db.session.add_all([
-        task1,
-        task2,
-        task3,
-        task4,
-        task5,
-        task6,
-        task7,
-        task8
+        Task(identifier='mass_m', name='Mass - Metric'),
+        Task(identifier='mass_i', name='Mass - Imperial'),
+        Task(identifier='mass_c', name='Mass - Combined'),
+        Task(identifier='length_m', name='Length - Metric'),
+        Task(identifier='length_i', name='Length - Imperial'),
+        Task(identifier='length_c', name='Length - Combined'),
+        Task(identifier='area', name='Area'),
+        Task(identifier='temperature_m', name='Temperature'),
+        Task(identifier='temperature_i', name='Temperature'),
+        Task(identifier='temperature_c', name='Temperature')
     ])
 
     # create test data

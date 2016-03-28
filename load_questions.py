@@ -97,9 +97,10 @@ def load_closeended(file):
             # check if question can be assigned as a dependent question to 'combined' task
             q_type = row[1].split("_")
             q_task = task_name.split("_")
-            if q_type[0] == "estimate" and len(q_task) == 2 and (q_task[1] == "m" or q_task[1] == "i") and tasks[q_task[0]+"_c"]:
+            if q_type[0] == "estimate" and len(q_task) == 2 and (q_task[1] == "m" or q_task[1] == "i") and q_task[0]+"_c" in tasks:
                 unit = "metric" if q_task[1] == "m" else "imperial"
-                task = tasks[q_task[0]+"_c"]
+                task = tasks.get(q_task[0]+"_c")
+
                 question.task_associations.append(QuestionTaskAssociation(task=task, unit_system_constraint=unit))
 
             for i in range(0,3):

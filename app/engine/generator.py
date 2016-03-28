@@ -28,9 +28,13 @@ def choose_questions(task: Task, user: User, number: int) -> [TaskRunQuestion]:
     :return: list of questions
     """
 
+    if not user.is_metric:
+        q = task.questions_m
+    else:
+        q = task.questions_i
+
     # shuffle questions
-    questions = Question.query.filter(Question.tasks.contains(task)).all()
-    questions = random.sample(task.questions, len(questions))
+    questions = random.sample(q, len(q))
 
     choosen_questions = []
     choosen_types_counts = {}
