@@ -48,6 +48,10 @@ def choose_questions(task: Task, user: User, number: int) -> [TaskRunQuestion]:
 
 
 def question_priority(question: Question, user: User, choosen_types_counts: {}) -> float:
+        # workaround to keep order of questions consistent when using testing task
+    if question.tasks[0].identifier == "test":
+        return question.id
+
     if question.type in choosen_types_counts:
         return 1 - choosen_types_counts[question.type]
     else:
