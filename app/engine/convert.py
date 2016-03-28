@@ -1,3 +1,5 @@
+import os
+
 from flask import current_app
 from pint import UnitRegistry, UndefinedUnitError
 from app.engine import currency
@@ -87,6 +89,23 @@ def format_number(number):
     return "{0:.3f}".format(number).rstrip('0').rstrip('.')
 
 
+def format_quantity_unit(quantity):
+    """
+    Format unit to printable string (eg. "meter")
+    :param quantity: quantity object
+    :type quantity: Pint.Quantity
+    :return: formated quantity string (eg. "meter")
+    :rtype: String
+    """
+
+    outputs = {"degC": "°C", "degF": "°F", "square_yard": "square yard", "square_mile": "square mile", "square_foot": "square foot",
+               "centimeter**2": "square centimeter", "decimeter**2": "square decimeter", "meter**2": "square meter",
+               "kilometer**2": "square kilometer"}
+    unit = outputs.get('{:C}'.format(quantity.units), '{:P}'.format(quantity.units))
+
+    return unit
+
+
 def format_unit(unit):
     """
     Format unit to printable string (eg. "meter")
@@ -97,7 +116,7 @@ def format_unit(unit):
     """
 
     q = ureg.parse_units(unit)
-    return '{:P}'.format(q)
+    return format_quantity_unit(q)
 
 
 def format_quantity(quantity):
@@ -109,7 +128,7 @@ def format_quantity(quantity):
     :rtype: String
     """
 
-    return "{0} {1:P}".format(format_number(quantity.magnitude), quantity.units)
+    return "{0} {1}".format(format_number(quantity.magnitude), format_quantity_unit(quantity))
 
 
 def format_value(unit_from, value_from):
@@ -129,3 +148,4 @@ def format_value(unit_from, value_from):
 ureg = UnitRegistry()
 rates = currency.get_currency_rates(config)
 register_exchange_rates(rates)
+ureg.load_definitions(os.path.join(os.path.dirname(__file__), 'config/custom_units.txt'))

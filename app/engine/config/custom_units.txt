@@ -1,0 +1,10 @@
+in2 = sq_in
+yd2 = sq_yd
+ft2 = sq_ft
+mi2 = sq_mi
+
+mm2 = mm ** 2
+cm2 = cm ** 2
+dm2 = dm ** 2
+m2 = m ** 2
+km2 = km ** 2
