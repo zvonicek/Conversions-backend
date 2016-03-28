@@ -8,3 +8,5 @@ cm2 = cm ** 2
 dm2 = dm ** 2
 m2 = m ** 2
 km2 = km ** 2
+
+fp = 0.7 * ha

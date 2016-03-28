@@ -100,7 +100,7 @@ def format_quantity_unit(unit):
 
     outputs = {"degC": "°C", "degF": "°F", "yd2": "square yard", "mi2": "square mile", "ft2": "square foot",
                "cm2": "square centimeter", "dm2": "square decimeter", "m2": "square meter",
-               "km2": "square kilometer"}
+               "km2": "square kilometer", "fp": "football pitch"}
     unit_string = outputs.get('{:C}'.format(unit), '{:P}'.format(unit))
 
     return unit_string
