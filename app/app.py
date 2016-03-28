@@ -5,6 +5,7 @@ from flask import Flask, request, render_template
 
 from app import extensions
 from .api import api
+from .web import web
 from .extensions import db, cache, compress
 from .config import DevelopmentConfig
 
@@ -13,6 +14,7 @@ __all__ = ['create_app']
 
 DEFAULT_BLUEPRINTS = (
     api,
+    web
 )
 
 
