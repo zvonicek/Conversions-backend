@@ -1,5 +1,6 @@
 import os
 
+import inflection
 from flask import current_app
 from pint import UnitRegistry, UndefinedUnitError
 from app.engine import currency
@@ -89,19 +90,24 @@ def format_number(number):
     return "{0:.3f}".format(number).rstrip('0').rstrip('.')
 
 
-def format_quantity_unit(unit):
+def format_quantity_unit(unit, plural=False):
     """
     Format unit to printable string (eg. "meter")
     :param unit: unit object
     :type unit: Pint.Unit
+    :param plural:
+    :type plural: Boolean
     :return: formated quantity string (eg. "meter")
     :rtype: String
     """
 
     outputs = {"degC": "°C", "degF": "°F", "yd2": "square yard", "mi2": "square mile", "ft2": "square foot",
                "in2": "square inch", "cm2": "square centimeter", "dm2": "square decimeter", "m2": "square meter",
-               "km2": "square kilometer", "fp": "football pitch", "US_ton": "ton (US)", "metric_ton": "tonne (m)"}
+               "km2": "square kilometer", "fp": "football pitch", "US_ton": "US ton", "metric_ton": "metric tonne"}
+
     unit_string = outputs.get('{:C}'.format(unit), '{:P}'.format(unit))
+    if plural and unit != "degC" and unit != "degF":
+        unit_string = inflection.pluralize(unit_string)
 
     return unit_string
 
@@ -128,7 +134,7 @@ def format_quantity(quantity):
     :rtype: String
     """
 
-    return "{0} {1}".format(format_number(quantity.magnitude), format_quantity_unit(quantity.units))
+    return "{0} {1}".format(format_number(quantity.magnitude), format_quantity_unit(quantity.units, quantity.magnitude > 1))
 
 
 def format_value(unit_from, value_from):

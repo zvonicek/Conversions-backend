@@ -7,7 +7,7 @@ from marshmallow_polyfield import PolyField
 from app.engine.utils import get_tolerance
 from app.models import NumericQuestion, ScaleQuestion, SortQuestion, CloseEndedQuestion, CurrencyQuestion, TextHint, \
     Hint
-from app.engine.convert import format_unit, format_value, format_number
+from app.engine.convert import format_unit, format_value, format_number, format_quantity
 from app.serialization.Hint import TextHintSchema, task_schema_serialization_disambiguation
 
 
@@ -111,7 +111,7 @@ class ScaleQuestionSchema(QuestionSchema):
 
     @staticmethod
     def get_task(obj):
-        return "Convert {} {} to {}".format(format_number(obj.from_value), format_unit(obj.from_unit), format_unit(obj.to_unit))
+        return "Convert {} to {}".format(format_value(obj.from_unit, obj.from_value), format_unit(obj.to_unit))
 
 
 # sort
