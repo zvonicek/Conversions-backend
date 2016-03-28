@@ -27,7 +27,14 @@ def start():
     user.is_metric = request.args.get('metric')
     db.session.commit()
 
-    task = Task.query.filter_by(identifier=request.args.get('task')).first()
+    task_name = request.args.get('task')
+
+    # temporary fix to 1.0 app version
+    n = task_name.split("_")
+    if n[0] == "area":
+        task_name = "area"
+
+    task = Task.query.filter_by(identifier=task_name).first()
 
     if task is None:
         abort(404)
