@@ -53,16 +53,18 @@ def update_task_run():
 
     updated_questions_ids = []
     for question in data["questions"]:
-        updated_questions_ids.append(question["id"])
-
-        db.session.query(TaskRunQuestion).filter(TaskRunQuestion.taskrun_id == data["id"])\
-            .filter(TaskRunQuestion.question_id == question["id"]) \
+        res = db.session.query(TaskRunQuestion).filter(TaskRunQuestion.taskrun_id == data["id"])\
+            .filter(TaskRunQuestion.question_id == question["id"])\
+            .filter(TaskRunQuestion.correct == None)\
             .update({"correct": question["correct"], "time": question["time"], "hint_shown": question["hintShown"],
                      "answer": question["answer"]})
 
+        # if question was updated, append the id to the list of updated questions
+        if res == 1:
+            updated_questions_ids.append(question["id"])
+
     db.session.commit()
 
-    # TODO filter just questions that have null answer
     updated_questions = TaskRunQuestion.query\
         .filter(TaskRunQuestion.taskrun_id == data["id"], TaskRunQuestion.question_id.in_(updated_questions_ids)).all()
     for question in updated_questions:
