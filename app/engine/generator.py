@@ -3,6 +3,7 @@ import random
 from app.extensions import db
 from app.models import TaskRun, Question, Task, User
 from app.models.Task import TaskRunQuestion
+from app.models.Skill import UserSkill
 
 
 def generate_game(task: Task, user: User) -> TaskRun:
@@ -13,8 +14,13 @@ def generate_game(task: Task, user: User) -> TaskRun:
     :return: freshly generated game
     """
 
-    # TODO first game will have just 5 questions
-    taskrun = TaskRun(task=task, user=user, questions=choose_questions(task, user, 10))
+    NUMBER_OF_QUESTIONS_FIRST = 5
+    NUMBER_OF_QUESTIONS = 10
+
+    skill = UserSkill.query.filter(UserSkill.user_id == user.id, UserSkill.task_id == task.id).first()
+    num = NUMBER_OF_QUESTIONS_FIRST if skill is None else NUMBER_OF_QUESTIONS
+
+    taskrun = TaskRun(task=task, user=user, questions=choose_questions(task, user, num))
     db.session.add(taskrun)
     db.session.commit()
     return taskrun
