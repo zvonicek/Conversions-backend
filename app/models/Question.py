@@ -6,7 +6,7 @@ from sqlalchemy.dialects.postgresql import ENUM, ARRAY
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship, reconstructor, Session
 
-from app.engine.convert import convert, to_normalized
+from app.engine import convert
 from app.extensions import db
 from .Hint import TextHint
 
@@ -84,6 +84,15 @@ class CloseEndedAnswer(db.Model):
 
     question = relationship('CloseEndedQuestion')
 
+    @property
+    def explanation(self):
+        correct_question = [x for x in self.question.answers if x.correct and x != self]
+        if len(correct_question) == 1:
+            converted_value = convert.convert(self.unit, self.value, correct_question[0].unit)
+            return convert.format_quantity(converted_value)
+        else:
+            return None
+
 
 # numeric
 
@@ -97,7 +106,7 @@ class NumericQuestion(Question):
 
     @property
     def to_value(self):
-        return convert(self.from_unit, self.from_value, self.to_unit).magnitude
+        return convert.convert(self.from_unit, self.from_value, self.to_unit).magnitude
 
     @property
     def hint(self):
@@ -119,7 +128,7 @@ class ScaleQuestion(Question):
 
     @property
     def to_value(self):
-        return convert(self.from_unit, self.from_value, self.to_unit).magnitude
+        return convert.convert(self.from_unit, self.from_value, self.to_unit).magnitude
 
     __mapper_args__ = {'polymorphic_identity': 'questionScale'}
 
@@ -180,7 +189,21 @@ class SortAnswer(db.Model):
     question = relationship('SortQuestion')
 
     def normalized_value(self):
-        return to_normalized(self.unit, self.value)
+        return convert.to_normalized(self.unit, self.value)
+
+    @property
+    def explanation(self):
+        min_unit = None
+        for question in self.question.answers:
+            normalized = convert.to_normalized(question.unit, 1)
+            if min_unit is None or convert.to_normalized(min_unit, 1) > normalized:
+                min_unit = question.unit
+
+        if min_unit and min_unit != self.unit:
+            converted_value = convert.convert(self.unit, self.value, min_unit)
+            return convert.format_quantity(converted_value)
+        else:
+            return None
 
 
 # currency
@@ -196,7 +219,7 @@ class CurrencyQuestion(Question):
 
     @hybrid_property
     def to_value(self):
-        return convert(self.from_unit, self.from_value, self.to_unit).magnitude
+        return convert.convert(self.from_unit, self.from_value, self.to_unit).magnitude
 
     @property
     def hint(self):

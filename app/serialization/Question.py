@@ -62,7 +62,7 @@ def question_schema_serialization_disambiguation(base_object, _):
 
 class CloseEndedAnswerSchema(Schema):
     answer = fields.Function(lambda obj: format_value(obj.unit, obj.value))
-    explanation = None  # not critical, maybe implement later
+    explanation = fields.String()
     correct = fields.Boolean()
 
 
@@ -126,7 +126,7 @@ class SortAnswerSchema(Schema):
     title = fields.Function(lambda obj: format_value(obj.unit, obj.value))
     correctPosition = fields.Integer(attribute="correct_pos")
     presentedPosition = fields.Integer(attribute="presented_pos")
-    errorExplanation = ""  # not critical, maybe implement later
+    errorExplanation = fields.String(attribute="explanation")
 
 
 class SortQuestionSchema(QuestionSchema):
