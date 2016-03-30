@@ -1,8 +1,10 @@
 from collections import OrderedDict
+import random
 
 from flask import logging, url_for
 from marshmallow import Schema, fields, post_load, pre_load
 from marshmallow_polyfield import PolyField
+from marshmallow.decorators import post_dump
 
 from app.engine.utils import get_tolerance
 from app.models import NumericQuestion, ScaleQuestion, SortQuestion, CloseEndedQuestion, CurrencyQuestion, TextHint, \
@@ -88,6 +90,10 @@ class CloseEndedQuestionSchema(QuestionSchema):
         else:
             return obj.question_en
 
+    @post_dump(pass_many=True)
+    def randomize_answers(self, data, many):
+        random.shuffle(data["answers"])
+
 # numeric
 
 class NumericQuestionSchema(QuestionSchema):
@@ -133,6 +139,9 @@ class SortQuestionSchema(QuestionSchema):
     def get_question(obj):
         return "Sort from {} to {}".format(obj.min_label, obj.max_label)
 
+    @post_dump(pass_many=True)
+    def randomize_answers(self, data, many):
+        random.shuffle(data["answers"])
 
 # currency
 
