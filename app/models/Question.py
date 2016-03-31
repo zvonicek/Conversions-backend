@@ -86,7 +86,7 @@ class CloseEndedAnswer(db.Model):
 
     @property
     def explanation(self):
-        correct_question = [x for x in self.question.answers if x.correct and x != self]
+        correct_question = [x for x in self.question.answers if x.correct and x.unit != self.unit]
         if len(correct_question) == 1:
             converted_value = convert.convert(self.unit, self.value, correct_question[0].unit)
             return convert.format_quantity(converted_value)
