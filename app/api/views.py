@@ -49,7 +49,7 @@ def start():
 def update_task_run():
     data = request.json
 
-    db.session.query(TaskRun).filter(TaskRun.id == data["id"]).update({"completed": not data["aborted"]})
+    db.session.query(TaskRun).filter(TaskRun.id == data["id"]).update({"completed": not data["aborted"], "summary": data["summary"]})
 
     updated_questions_ids = []
     for question in data["questions"]:

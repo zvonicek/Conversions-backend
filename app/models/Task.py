@@ -45,6 +45,7 @@ class TaskRun(db.Model):
     user_id = Column(Integer, ForeignKey("user.id"))
     date = Column(DateTime, default=datetime.datetime.utcnow)
     completed = Column(Boolean, nullable=True)
+    summary = Column(JSONB, nullable=True)
 
     task = relationship("Task")
     user = relationship("User", back_populates="taskruns")
@@ -116,7 +117,6 @@ class TaskRunQuestion(db.Model):
                 return 0.2
             else:
                 # user answered correctly on first try without using hint
-                global accuracy
                 accuracy = 1
 
                 if 'answer' in self.answer and 'tolerance' in self.answer and 'correctAnswer' in self.answer:
