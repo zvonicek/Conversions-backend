@@ -3,9 +3,9 @@ from flask.ext.migrate import Migrate, MigrateCommand
 
 from app.app import create_app
 from app.extensions import db
-from app.models import Hint, Question, Task
+from app.config import config
 
-app = create_app()
+app = create_app(config)
 
 migrate = Migrate(app, db)
 manager = Manager(app)
