@@ -25,7 +25,12 @@ def start():
     user.app_version = request.args.get('version')
     user.language = request.args.get('language')
     user.is_metric = request.args.get('metric')
-    user.ip_address = request.remote_addr
+
+    if request.headers.getlist("X-Forwarded-For"):
+        user.ip_address = request.headers.getlist("X-Forwarded-For")[0]
+    else:
+        user.ip_address = request.remote_addr
+
     db.session.commit()
 
     task_name = request.args.get('task')
