@@ -25,6 +25,7 @@ def start():
     user.app_version = request.args.get('version')
     user.language = request.args.get('language')
     user.is_metric = request.args.get('metric')
+    user.ip_address = request.remote_addr
     db.session.commit()
 
     task_name = request.args.get('task')
@@ -55,7 +56,6 @@ def update_task_run():
     for question in data["questions"]:
         res = db.session.query(TaskRunQuestion).filter(TaskRunQuestion.taskrun_id == data["id"])\
             .filter(TaskRunQuestion.question_id == question["id"])\
-            .filter(TaskRunQuestion.correct == None)\
             .update({"correct": question["correct"], "time": question["time"], "hint_shown": question["hintShown"],
                      "answer": question["answer"]})
 

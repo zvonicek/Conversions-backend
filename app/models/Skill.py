@@ -12,6 +12,7 @@ class User(db.Model):
     language = Column(String)
     is_metric = Column(Boolean, nullable=True)
     skill_value = Column(Float, default=0)
+    ip_address = Column(String, nullable=True)
 
     skills = relationship('UserSkill', back_populates="user")
     taskruns = relationship('TaskRun', back_populates="user")
