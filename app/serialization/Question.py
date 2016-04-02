@@ -157,13 +157,14 @@ class CurrencySchema(QuestionSchema):
     @staticmethod
     def get_available_notes(obj):
         return [CurrencySchema.create_note(1, obj.to_unit, 5), CurrencySchema.create_note(5, obj.to_unit, 5),
-                CurrencySchema.create_note(10, obj.to_unit, 10), CurrencySchema.create_note(100, obj.to_unit, 5),
-                CurrencySchema.create_note(500, obj.to_unit, 5), CurrencySchema.create_note(1000, obj.to_unit, 5)]
+                CurrencySchema.create_note(10, obj.to_unit, 5), CurrencySchema.create_note(50, obj.to_unit, 5),
+                CurrencySchema.create_note(100, obj.to_unit, 5), CurrencySchema.create_note(500, obj.to_unit, 5),
+                CurrencySchema.create_note(1000, obj.to_unit, 5)]
 
     @staticmethod
     def get_correct_notes(obj):
         notes = CurrencySchema.get_available_notes(obj)
-        remaining_value = obj.to_value
+        remaining_value = round(obj.to_value, 0)
         correct_notes = []
 
         for note in reversed(list(notes)):
