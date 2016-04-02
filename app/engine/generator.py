@@ -23,11 +23,12 @@ def generate_game(task: Task, user: User) -> TaskRun:
     NUMBER_OF_QUESTIONS_FIRST = 5
     NUMBER_OF_QUESTIONS = 10
 
-    skill = UserSkill.query.filter(UserSkill.user_id == user.id, UserSkill.task_id == task.id).first()
+    taskrun = TaskRun(task=task, user=user)
+
+    skill = taskrun.corresponding_skill(create_if_none=False)
     number_of_questions_load = NUMBER_OF_QUESTIONS_FIRST if skill is None else NUMBER_OF_QUESTIONS
     skill_value = 0 if skill is None else skill.value
 
-    taskrun = TaskRun(task=task, user=user)
     taskrun.questions = choose_questions(task, user, number_of_questions_load, skill_value)
     db.session.add(taskrun)
     db.session.commit()

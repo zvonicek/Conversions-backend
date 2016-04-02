@@ -23,7 +23,7 @@ class TaskRunQuestionSchema(Schema):
 
 class TaskRunSchema(Schema):
     id = fields.Int(dump_only=True)
-    speedFeedback = fields.Constant(True)  # TODO nastavit dynamicky podle levelu uzivatele
+    speedFeedback = fields.Boolean(attribute="allow_speed_feedback")  # TODO nastavit dynamicky podle levelu uzivatele
     questions = fields.Nested(TaskRunQuestionSchema, many=True, only=('question'))
 
 
