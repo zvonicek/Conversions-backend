@@ -3,29 +3,29 @@ import math
 from app.models.Task import TaskRunQuestion
 
 
-def compute_expected_response(user_skill: float, difficulty: float) -> float:
+def compute_expected_response(user_skill: float, difficulty: float, response_time: float = 1) -> float:
     # the easier is the question for the user, the higher is the expected response
-    return 1. / (1 + math.exp(difficulty - user_skill))
+    return 1. / (1 + math.exp(difficulty - math.log(response_time) - user_skill))
 
 
 def compute_user_skill_delta(response: float, expected_response: float) -> float:
-    K_CORRECT = 3.5
-    K_INCORRECT = 2.5
+    K_SUCCESS = 3.5
+    K_FAILURE = 0.3
 
-    if response == 1:
-        delta = K_CORRECT * (response - expected_response)
+    if response >= expected_response:
+        delta = K_SUCCESS * (response - expected_response)
     else:
-        delta = K_INCORRECT * (response - expected_response)
+        delta = K_FAILURE * (response - expected_response)
 
     return delta
 
 
 def compute_difficulty_delta(response: float, expected_response: float, first_attempts_count: float) -> float:
-    ALPHA = 1.2
-    DYNAMIC_ALPHA = 0.1
-    K = ALPHA / (1 + DYNAMIC_ALPHA * (first_attempts_count - 1))
+    ALPHA = 1.0
+    BETA = 0.06
+    K = ALPHA / (1 + BETA * (first_attempts_count - 1))
 
-    delta = K * (expected_response - response)  # that is K * ((1 - response) - (1 - expected_response))
+    delta = K * (expected_response - response)  # = K * ((1 - response) - (1 - expected_response))
     return delta
 
 
@@ -50,9 +50,8 @@ def update(question_run: TaskRunQuestion):
     response = question_run.get_score()
     user_skill = question_run.corresponding_skill()
 
-    expected_response = compute_expected_response(user_skill.value, question_run.question.difficulty)
+    expected_response = compute_expected_response(user_skill.value, question_run.question.difficulty, question_run.time)
     user_skill_delta = compute_user_skill_delta(response, expected_response)
-
     user_skill.value += user_skill_delta
 
     # TODO - update also glbal skill
