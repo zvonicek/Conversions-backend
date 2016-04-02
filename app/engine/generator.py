@@ -1,5 +1,11 @@
 import random
+import datetime
+from math import sqrt
+from typing import List
 
+from sqlalchemy import text
+
+from app.engine.elo import compute_expected_response
 from app.extensions import db
 from app.models import TaskRun, Question, Task, User
 from app.models.Task import TaskRunQuestion
@@ -18,19 +24,22 @@ def generate_game(task: Task, user: User) -> TaskRun:
     NUMBER_OF_QUESTIONS = 10
 
     skill = UserSkill.query.filter(UserSkill.user_id == user.id, UserSkill.task_id == task.id).first()
-    num = NUMBER_OF_QUESTIONS_FIRST if skill is None else NUMBER_OF_QUESTIONS
+    number_of_questions_load = NUMBER_OF_QUESTIONS_FIRST if skill is None else NUMBER_OF_QUESTIONS
+    skill_value = 0 if skill is None else skill.value
 
-    taskrun = TaskRun(task=task, user=user, questions=choose_questions(task, user, num))
+    taskrun = TaskRun(task=task, user=user)
+    taskrun.questions = choose_questions(task, user, number_of_questions_load, skill_value)
     db.session.add(taskrun)
     db.session.commit()
     return taskrun
 
 
-def choose_questions(task: Task, user: User, number: int) -> [TaskRunQuestion]:
+def choose_questions(task: Task, user: User, number: int, skill: float) -> [TaskRunQuestion]:
     """
     :param task: task for which to choose questions
     :param user: user for which to choose questions
     :param number: number of questions to choose
+    :param skill: skill of the user for the current task
     :return: list of questions
     """
 
@@ -42,12 +51,15 @@ def choose_questions(task: Task, user: User, number: int) -> [TaskRunQuestion]:
     # shuffle questions
     questions = random.sample(q, len(q))
 
+    answered_counts, last_answer_dates = fetch_questions_stats(questions, user)
+
     choosen_questions = []
     choosen_types_counts = {}
 
     for i in range(0, number):
         random.shuffle(questions)
-        questions.sort(key=lambda k: question_priority(k, user, choosen_types_counts), reverse=True)
+        questions.sort(key=lambda k: question_priority(k, user, choosen_types_counts, answered_counts,
+                                                       last_answer_dates, skill), reverse=True)
 
         if len(questions) > 0:
             choosen_questions.append(TaskRunQuestion(question=questions[0], position=i))
@@ -57,12 +69,62 @@ def choose_questions(task: Task, user: User, number: int) -> [TaskRunQuestion]:
     return choosen_questions
 
 
-def question_priority(question: Question, user: User, choosen_types_counts: {}) -> float:
-        # workaround to keep order of questions consistent when using testing task
+def question_priority(question: Question, user: User, choosen_types_counts: {}, answered_counts: {},
+                      last_answer_dates: {}, skill_value: float) -> float:
+    # a hack to keep order of questions consistent when using testing task
     if question.tasks[0].identifier == "test":
         return question.id
 
-    if question.type in choosen_types_counts:
-        return 1 - choosen_types_counts[question.type]
+    RESPONSE_GOAL = 0.75
+
+    ANSWERED_COUNT_WEIGHT = 10
+    SAME_TYPE_PENALTY_WEIGHT = 10
+    TIME_WEIGHT = 120
+    PROBABILITY_WEIGHT = 10
+
+    # score for total answered count for the user
+    answered_count_score = 1. / sqrt(1 + answered_counts.get(question.id, 0))
+    # score for number of selected questions of the same type
+    same_type_penalty_score = 1. / sqrt(1 + choosen_types_counts.get(question.type, 0))
+
+    # score for time from last answer of the question
+    if question.id in last_answer_dates:
+        time_score = -1. / (last_answer_dates[question.id]) if last_answer_dates[question.id] > 0 else -1
     else:
-        return 1.0
+        time_score = 0
+
+    # score for probability of correct answer
+    expected_response = compute_expected_response(skill_value, question.difficulty)
+    if RESPONSE_GOAL > expected_response:
+        probability_score = expected_response / RESPONSE_GOAL
+    else:
+        probability_score = (1 - expected_response) / (1 - RESPONSE_GOAL)
+
+    return answered_count_score * ANSWERED_COUNT_WEIGHT + same_type_penalty_score * SAME_TYPE_PENALTY_WEIGHT + time_score * TIME_WEIGHT + probability_score * PROBABILITY_WEIGHT
+
+
+def fetch_questions_stats(questions: List[Question], user: User):
+    answered_counts_rows = db.session.execute(text('SELECT question.id, count(question.id) AS count FROM question '
+                                                   'JOIN taskrun_question ON taskrun_question.question_id = question.id '
+                                                   'JOIN taskrun ON taskrun_question.taskrun_id = taskrun.id '
+                                                   'WHERE taskrun_question.correct is not null AND taskrun.user_id = :userid '
+                                                   'AND question.id IN :questions '
+                                                   'GROUP BY question.id'),
+                                              params={"userid": user.id,
+                                                      "questions": tuple(map((lambda x: x.id), questions))})
+
+    answered_counts = dict((x.id, x.count) for x in answered_counts_rows)
+
+    last_answer_date_rows = db.session.execute(text('SELECT question.id, MAX(taskrun.date) AS date FROM question '
+                                                    'JOIN taskrun_question ON taskrun_question.question_id = question.id '
+                                                    'JOIN taskrun ON taskrun_question.taskrun_id = taskrun.id '
+                                                    'WHERE taskrun_question.correct is not null AND taskrun.user_id = :userid '
+                                                    'AND question.id IN :questions '
+                                                    'GROUP BY question.id'),
+                                               params={"userid": user.id,
+                                                       "questions": tuple(map((lambda x: x.id), questions))})
+
+    now = datetime.datetime.now()
+    last_answer_dates = dict((x.id, (now - x.date).total_seconds()) for x in last_answer_date_rows)
+
+    return answered_counts, last_answer_dates

@@ -53,6 +53,14 @@ class Question(db.Model):
         else:
             return None
 
+    def user_answered_times(self, user):
+        from app.models import TaskRunQuestion, TaskRun
+        anwered_times = Question.query.join(TaskRunQuestion).join(TaskRun)\
+            .filter(TaskRunQuestion.correct != None,
+                    TaskRunQuestion.question_id == self.id,
+                    TaskRun.user_id == user.id) \
+            .count()
+
     __mapper_args__ = {
         'polymorphic_identity': 'question',
         'polymorphic_on': type
