@@ -51,6 +51,27 @@ class TaskRun(db.Model):
     user = relationship("User", back_populates="taskruns")
     questions = relationship("TaskRunQuestion", back_populates="taskrun", order_by="TaskRunQuestion.position")
 
+    def corresponding_skill(self, create_if_none=True) -> UserSkill:
+        """
+        Returns skill corresponding to the user and the question of the TaskRunQuestion
+        """
+
+        skill = UserSkill.query \
+            .filter(UserSkill.user_id == self.user_id,
+                    UserSkill.task_id == self.task_id
+                    ) \
+            .first()
+
+        if skill is None and create_if_none:
+            skill = UserSkill(task_id=self.taskrun.task_id, user_id=self.taskrun.user_id)
+            db.session.add(skill)
+
+        return skill
+
+    def allow_speed_feedback(self) -> Boolean:
+        skill = self.corresponding_skill(create_if_none=False)
+        return skill is not None and skill.value > 0.0
+
 
 class TaskRunQuestion(db.Model):
     __tablename__ = 'taskrun_question'
@@ -80,23 +101,6 @@ class TaskRunQuestion(db.Model):
             .count()
 
         return count == 0
-
-    def corresponding_skill(self) -> UserSkill:
-        """
-        Returns skill corresponding to the user and the question of the TaskRunQuestion
-        """
-
-        skill = UserSkill.query \
-            .filter(UserSkill.user_id == self.taskrun.user_id,
-                    UserSkill.task_id == self.taskrun.task_id
-                    ) \
-            .first()
-
-        if skill is None:
-            skill = UserSkill(task_id=self.taskrun.task_id, user_id=self.taskrun.user_id)
-            db.session.add(skill)
-
-        return skill
 
     def get_score(self) -> Optional[float]:
         """
