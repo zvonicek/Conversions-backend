@@ -146,4 +146,4 @@ if __name__ == "__main__":
         elif task_type == "closeended":
             load_closeended(csv_file)
         elif task_type == "currency":
-            load_scale(csv_file)
+            load_currency(csv_file)

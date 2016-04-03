@@ -141,3 +141,5 @@ temperature_i;estimate_temperature;bežná tělesná  teplota;ordinary body temp
 temperature_i;estimate_temperature;šálku horkého kakaa;cup of hot cocoa;;0,4;70;degF;false;140;degF;true;;;;
 temperature_i;estimate_temperature;bodu mrazu;freezing point of water;;0;32;degF;true;0;degF;false;;;;
 ;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;
