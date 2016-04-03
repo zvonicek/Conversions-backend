@@ -119,7 +119,8 @@ class NumericQuestion(Question):
 
     @property
     def hint(self):
-        if bool(random.getrandbits(1)):
+        isCurrency = "[currency]" in list(convert.ureg.parse_units(self.to_unit).dimensionality)
+        if bool(random.getrandbits(1)) or isCurrency:
             return TextHint.create_unit_hint(self.from_unit, self.to_unit)
         else:
             return ScaleHint.create_unit_hint(self.from_unit, self.to_unit)

@@ -106,7 +106,7 @@ def format_quantity_unit(unit, plural=False):
                "km2": "square kilometer", "fp": "football pitch", "US_ton": "US ton", "metric_ton": "metric tonne"}
 
     unit_string = outputs.get('{:C}'.format(unit), '{:P}'.format(unit))
-    if plural and unit != "degC" and unit != "degF":
+    if plural and unit != "degC" and unit != "degF" and "[currency]" not in list(unit.dimensionality):
         unit_string = inflection.pluralize(unit_string)
 
     return unit_string
