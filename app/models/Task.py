@@ -63,7 +63,7 @@ class TaskRun(db.Model):
             .first()
 
         if skill is None and create_if_none:
-            skill = UserSkill(task_id=self.taskrun.task_id, user_id=self.taskrun.user_id)
+            skill = UserSkill(task_id=self.task_id, user_id=self.user_id)
             db.session.add(skill)
 
         return skill
