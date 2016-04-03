@@ -55,7 +55,7 @@ length_c;compare;Co je delší?;Which is more?;;0,2;1;m;false;10;ft;true;;;;
 length_c;compare;Co je delší?;Which is more?;;0,3;1000;yd;false;1;km;true;;;;
 length_c;compare;Co je delší?;Which is more?;;0,4;1;mi;false;20000;dm;true;1800;m;false;
 ;;;;;;;;;;;;;;;
-mass_m;estimate_weight;svorky;paperclip;;0;1;g;true;1;kg;true;;;;
+mass_m;estimate_weight;svorky;paperclip;;0;1;g;true;1;kg;false;;;;
 mass_m;estimate_weight;tlusté knihy;thick book;;0;1;kg;true;1;g;false;;;;
 mass_m;estimate_weight;obálky;envelope;;0,2;30;g;false;1;g;true;200;kg;false;
 mass_m;estimate_weight;lžíce;spoon;;0,4;3;kg;false;2;g;false;25;g;true;
