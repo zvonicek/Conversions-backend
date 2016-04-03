@@ -23,7 +23,7 @@ def generate_game(task: Task, user: User) -> TaskRun:
     NUMBER_OF_QUESTIONS_FIRST = 5
     NUMBER_OF_QUESTIONS = 10
 
-    taskrun = TaskRun(task=task, user=user)
+    taskrun = TaskRun(task_id=task.id, user_id=user.id)
 
     skill = taskrun.corresponding_skill(create_if_none=False)
     number_of_questions_load = NUMBER_OF_QUESTIONS_FIRST if skill is None else NUMBER_OF_QUESTIONS

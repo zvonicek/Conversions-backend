@@ -130,7 +130,6 @@ class TaskRunQuestion(db.Model):
                     accuracy = 1 - ((correctAnswer - answer) / tolerance)
 
                 expected_time = self.question.expected_time(none_on_default=False)
-                global speed
                 if expected_time > self.time:
                     speed = 1
                 else:

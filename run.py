@@ -45,7 +45,10 @@ def initdb():
         Task(identifier='area', name='Area'),
         Task(identifier='temperature_m', name='Temperature'),
         Task(identifier='temperature_i', name='Temperature'),
-        Task(identifier='temperature_c', name='Temperature')
+        Task(identifier='temperature_c', name='Temperature'),
+        Task(identifier='currency_czk', name='Currency - CZK'),
+        Task(identifier='currency_eur', name='Currency - EUR'),
+        Task(identifier='currency_usd', name='Currency - USD'),
     ])
 
     # create test data
