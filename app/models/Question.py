@@ -98,7 +98,12 @@ class CloseEndedAnswer(db.Model):
         correct_question = [x for x in self.question.answers if x.correct and x.unit != self.unit]
         if len(correct_question) == 1:
             converted_value = convert.convert(self.unit, self.value, correct_question[0].unit)
-            return convert.format_quantity(converted_value)
+
+            if converted_value.magnitude > 0.001:
+                return convert.format_quantity(converted_value)
+            else:
+                # the value is below the required precision so we cannot use it
+                return None
         else:
             return None
 
@@ -220,7 +225,11 @@ class SortAnswer(db.Model):
 
         if min_unit and min_unit != self.unit:
             converted_value = convert.convert(self.unit, self.value, min_unit)
-            return convert.format_quantity(converted_value)
+            if converted_value.magnitude > 0.001:
+                return convert.format_quantity(converted_value)
+            else:
+                # the value is below the required precision so we cannot use it
+                return None
         else:
             return None
 
