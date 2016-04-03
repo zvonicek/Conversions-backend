@@ -1,4 +1,5 @@
 import math
+import random
 from typing import Optional
 
 from sqlalchemy import Column, Integer, ForeignKey, String, Boolean, Float, Table, func, distinct
@@ -8,7 +9,7 @@ from sqlalchemy.orm import relationship, reconstructor, Session
 
 from app.engine import convert
 from app.extensions import db
-from .Hint import TextHint
+from .Hint import TextHint, ScaleHint
 
 
 class QuestionTaskAssociation(db.Model):
@@ -118,7 +119,10 @@ class NumericQuestion(Question):
 
     @property
     def hint(self):
-        return TextHint.create_unit_hint(self.from_unit, self.to_unit)
+        if bool(random.getrandbits(1)):
+            return TextHint.create_unit_hint(self.from_unit, self.to_unit)
+        else:
+            return ScaleHint.create_unit_hint(self.from_unit, self.to_unit)
 
     __mapper_args__ = {'polymorphic_identity': 'questionNumeric'}
 
