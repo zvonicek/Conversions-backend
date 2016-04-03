@@ -23,7 +23,8 @@ def compute_user_skill_delta(response: float, expected_response: float) -> float
 def compute_difficulty_delta(response: float, expected_response: float, first_attempts_count: float) -> float:
     ALPHA = 1.0
     BETA = 0.06
-    K = ALPHA / (1 + BETA * (first_attempts_count - 1))
+    # each question has initial difficulty which is treated as a regular rank, so we do not lower first_attempts_count by one
+    K = ALPHA / (1 + BETA * first_attempts_count)
 
     delta = K * (expected_response - response)  # = K * ((1 - response) - (1 - expected_response))
     return delta
@@ -50,11 +51,15 @@ def update(question_run: TaskRunQuestion):
     response = question_run.get_score()
     user_skill = question_run.taskrun.corresponding_skill()
 
+    # task skill
     expected_response = compute_expected_response(user_skill.value, question_run.question.difficulty, question_run.time)
     user_skill_delta = compute_user_skill_delta(response, expected_response)
     user_skill.value += user_skill_delta
 
-    # TODO - update also glbal skill
+    # global user skill
+    expected_response_global = compute_expected_response(question_run.taskrun.user.skill_value, question_run.question.difficulty, question_run.time)
+    user_skill_delta_global = compute_user_skill_delta(response, expected_response_global)
+    question_run.taskrun.user.skill_value += user_skill_delta_global
 
     # update question difficuilty
     if question_run.is_users_first_attempt:
