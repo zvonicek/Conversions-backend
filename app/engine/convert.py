@@ -58,7 +58,10 @@ def convert(quantity_from, value_from, quantity_to):
 
     from_q = ureg.Quantity(value_from, quantity_from)
     to_q = ureg.Quantity(1, quantity_to)
-    return from_q.to(to_q)
+    to = from_q.to(to_q)
+    to = round(to, 3)
+    to += 0  # workaround to prevent having negative zero
+    return to
 
 
 def to_normalized(quantity_from, value_from):
