@@ -9,8 +9,8 @@ def compute_expected_response(user_skill: float, difficulty: float, response_tim
 
 
 def compute_user_skill_delta(response: float, expected_response: float) -> float:
-    K_SUCCESS = 3.5
-    K_FAILURE = 0.3
+    K_SUCCESS = 3.4
+    K_FAILURE = 0.4
 
     if response >= expected_response:
         delta = K_SUCCESS * (response - expected_response)

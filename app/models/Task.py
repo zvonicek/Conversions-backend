@@ -1,6 +1,7 @@
 import datetime
 from typing import Optional
 
+import math
 from sqlalchemy import Column, Integer, ForeignKey, String, DateTime, Boolean, Float, select, func, join, sql
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -126,8 +127,10 @@ class TaskRunQuestion(db.Model):
                 if 'answer' in self.answer and 'tolerance' in self.answer and 'correctAnswer' in self.answer:
                     answer, tolerance, correctAnswer = float(self.answer["answer"]), float(
                         self.answer["tolerance"]), float(self.answer["correctAnswer"])
+                    correctAnswer = round(correctAnswer)
+                    
                     # question has allowed tolerance, can adjust accuracy analyzing that
-                    accuracy = 1 - ((correctAnswer - answer) / tolerance)
+                    accuracy = 1 - (abs(correctAnswer - answer) / tolerance)
 
                 expected_time = self.question.expected_time(none_on_default=False)
                 if expected_time > self.time:
@@ -135,8 +138,8 @@ class TaskRunQuestion(db.Model):
                 else:
                     speed = SPEED_PENALTY_SLOPE ** ((self.time / expected_time) - 1)
 
-                print("score old:", 0.4 + 0.*accuracy + 0.3*speed, "score new:", 0.5 + 0.5 * accuracy)
-                return 0.5 + 0.5 * accuracy
+                print("score old:", 0.4 + 0.3*accuracy + 0.3*speed, "score new:", 0.5 + 0.5 * accuracy)
+                return 0.6 + 0.4 * accuracy
         else:
             # answer was not correct
             return 0
