@@ -135,8 +135,8 @@ class TaskRunQuestion(db.Model):
                 else:
                     speed = SPEED_PENALTY_SLOPE ** ((self.time / expected_time) - 1)
 
-                print("speed: " + str(speed) + " accuracy:" + str(accuracy))
-                return 0.4 + 0.3 * accuracy + 0.3 * speed
+                print("score old:", 0.4 + 0.*accuracy + 0.3*speed, "score new:", 0.5 + 0.5 * accuracy)
+                return 0.5 + 0.5 * accuracy
         else:
             # answer was not correct
             return 0
