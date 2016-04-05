@@ -21,7 +21,7 @@ def generate_game(task: Task, user: User) -> TaskRun:
     """
 
     NUMBER_OF_QUESTIONS_FIRST = 5
-    NUMBER_OF_QUESTIONS = 10
+    NUMBER_OF_QUESTIONS = 6
 
     taskrun = TaskRun(task_id=task.id, user_id=user.id)
 
