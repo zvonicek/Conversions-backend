@@ -55,6 +55,7 @@ def update(question_run: TaskRunQuestion):
     expected_response = compute_expected_response(user_skill.value, question_run.question.difficulty, question_run.time)
     user_skill_delta = compute_user_skill_delta(response, expected_response)
     user_skill.value += user_skill_delta
+    print("respose:", response, "expected response:", expected_response, "skill delta:", user_skill_delta)
 
     # global user skill
     expected_response_global = compute_expected_response(question_run.taskrun.user.skill_value, question_run.question.difficulty, question_run.time)

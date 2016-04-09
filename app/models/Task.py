@@ -109,8 +109,6 @@ class TaskRunQuestion(db.Model):
         :return: score [0, 1] of the answer, null if question not answered yet
         """
 
-        SPEED_PENALTY_SLOPE = 0.6
-
         if self.correct is None or self.time is None:
             return None
 
@@ -132,13 +130,6 @@ class TaskRunQuestion(db.Model):
                     # question has allowed tolerance, can adjust accuracy analyzing that
                     accuracy = 1 - (abs(correctAnswer - answer) / tolerance)
 
-                expected_time = self.question.expected_time(none_on_default=False)
-                if expected_time > self.time:
-                    speed = 1
-                else:
-                    speed = SPEED_PENALTY_SLOPE ** ((self.time / expected_time) - 1)
-
-                print("score old:", 0.4 + 0.3*accuracy + 0.3*speed, "score new:", 0.5 + 0.5 * accuracy)
                 return 0.6 + 0.4 * accuracy
         else:
             # answer was not correct
