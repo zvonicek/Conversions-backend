@@ -109,7 +109,7 @@ class TaskRunQuestion(db.Model):
         :return: score [0, 1] of the answer, null if question not answered yet
         """
 
-        if self.correct is None or self.time is None:
+        if self.correct is None:
             return None
 
         if self.correct:
