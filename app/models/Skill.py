@@ -1,5 +1,7 @@
+import datetime
 from sqlalchemy import Column, Integer, ForeignKey, String, DateTime, Boolean, Float, Table
 from sqlalchemy.orm import relationship
+from sqlalchemy.event import listens_for
 
 from app.extensions import db
 
@@ -33,3 +35,18 @@ class UserSkill(db.Model):
 
     task = relationship('Task')
     user = relationship('User')
+
+
+@listens_for(UserSkill, 'before_update')
+def create_history_record(mapper, connect, self):
+    history = UserSkillHistory(task_id=self.task_id, user_id=self.user_id, value=self.value)
+    db.session.add(history)
+
+
+class UserSkillHistory(db.Model):
+    __tablename__ = 'user_skill_history'
+    id = Column(Integer, primary_key=True)
+    task_id = Column(Integer, ForeignKey('task.id'))
+    user_id = Column(Integer, ForeignKey('user.id'))
+    value = Column(Float, default=0)
+    date = Column(DateTime, default=datetime.datetime.utcnow)
