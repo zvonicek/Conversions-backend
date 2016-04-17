@@ -2,10 +2,13 @@ import math
 import random
 from typing import Optional
 
-from sqlalchemy import Column, Integer, ForeignKey, String, Boolean, Float, Table, func, distinct
+import datetime
+
+from sqlalchemy import Column, Integer, ForeignKey, String, Boolean, Float, Table, func, distinct, DateTime
 from sqlalchemy.dialects.postgresql import ENUM, ARRAY
+from sqlalchemy.event import listens_for
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import relationship, reconstructor, Session
+from sqlalchemy.orm import relationship, reconstructor, Session, object_session, attributes
 
 from app.engine import convert
 from app.extensions import db
@@ -67,6 +70,16 @@ class Question(db.Model):
         'polymorphic_on': type
     }
 
+
+class QuestionHistory(db.Model):
+    __tablename__ = 'question_history'
+    id = Column(Integer, primary_key=True)
+    question_id = Column(Integer, ForeignKey("question.id"))
+    target_time = Column(Float, default=0)
+    difficulty = Column(Float, default=0)
+    date = Column(DateTime, default=datetime.datetime.utcnow)
+
+    question = relationship('Question')
 
 # close ended
 

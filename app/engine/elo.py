@@ -1,5 +1,7 @@
 import math
 
+from app.extensions import db
+from app.models import QuestionHistory
 from app.models.Task import TaskRunQuestion
 
 
@@ -68,3 +70,8 @@ def update(question_run: TaskRunQuestion):
         question_run.question.difficulty += compute_difficulty_delta(response,
                                                                      expected_response,
                                                                      question_run.question.answered_first_time_times())
+
+    if question_run.is_users_first_attempt:
+        history = QuestionHistory(question_id=question_run.question.id, target_time=question_run.question.target_time, difficulty=question_run.question.difficulty)
+        db.session.add(history)
+
