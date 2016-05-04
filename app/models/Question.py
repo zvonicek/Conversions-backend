@@ -81,6 +81,7 @@ class QuestionHistory(db.Model):
 
     question = relationship('Question')
 
+
 # close ended
 
 class CloseEndedQuestion(Question):
@@ -256,7 +257,6 @@ class CurrencyQuestion(Question):
     from_value = Column(Float)  # eg. 10
     from_unit = Column(String)  # eg. CZK
     to_unit = Column(String)   # eg. EUR
-    # available_notes = Column(ARRAY(Integer, dimensions=2)) # (100, 4), (20, 1) -- 100,- 4x, 20,- 1x
 
     @hybrid_property
     def to_value(self):
