@@ -106,7 +106,8 @@ def format_quantity_unit(unit, plural=False):
 
     outputs = {"degC": "°C", "degF": "°F", "yd2": "square yard", "mi2": "square mile", "ft2": "square foot",
                "in2": "square inch", "cm2": "square centimeter", "dm2": "square decimeter", "m2": "square meter",
-               "km2": "square kilometer", "fp": "football pitch", "US_ton": "US ton", "metric_ton": "metric tonne"}
+               "km2": "square kilometer", "fp": "football pitch", "tc": "tennis court", "et": "Eiffel Tower",
+               "esb": "Empire State Building", "bb": "Big Ben", "US_ton": "US ton", "metric_ton": "metric tonne"}
 
     unit_string = outputs.get('{:C}'.format(unit), '{:P}'.format(unit))
     if plural and unit != "degC" and unit != "degF" and "[currency]" not in list(unit.dimensionality):

@@ -1,0 +1,14 @@
+task;difficulty;from_value;from_unit;to_unit;image_name;
+length_m;1,5;2;et;m;;
+length_m;1,5;3;et;m;;
+length_m;1,5;5;et;m;;
+length_i;1,5;2;et;ft;;
+length_i;1,5;4;et;ft;;
+length_m;1,5;2;esb;m;;
+length_m;1,5;3;esb;m;;
+length_m;1,5;5;esb;m;;
+length_i;1,5;2;esb;ft;;
+length_i;1,5;4;esb;ft;;
+length_i;1,5;5;esb;ft;;
+area;1,9;3;fp;m2;;
+area;1,9;10;fp;ha;;
