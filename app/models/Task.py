@@ -71,7 +71,7 @@ class TaskRun(db.Model):
 
     def allow_speed_feedback(self) -> Boolean:
         skill = self.corresponding_skill(create_if_none=False)
-        return skill is not None and skill.value > 0.0
+        return skill is not None and skill.value > 0.5
 
 
 class TaskRunQuestion(db.Model):
