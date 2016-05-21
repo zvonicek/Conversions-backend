@@ -28,11 +28,13 @@ class Task(db.Model):
     # questions like 'estimate eight of a tea cup' with answers in imperial and vice versa)
     questions_m = relationship('Question', secondary='question_task_association',
                                secondaryjoin=sql.and_(QuestionTaskAssociation.question_id == Question.id,
+                                                      Question.enabled != False,
                                                       sql.or_(QuestionTaskAssociation.unit_system_constraint == "metric",
                                                               QuestionTaskAssociation.unit_system_constraint == None)
                                                       ))
     questions_i = relationship('Question', secondary='question_task_association',
                                secondaryjoin=sql.and_(QuestionTaskAssociation.question_id == Question.id,
+                                                      Question.enabled != False,
                                                       sql.or_(
                                                           QuestionTaskAssociation.unit_system_constraint == "imperial",
                                                           QuestionTaskAssociation.unit_system_constraint == None)
