@@ -3,9 +3,10 @@ import datetime
 from math import sqrt
 from typing import List
 
+import math
 from sqlalchemy import text
 
-from app.engine.elo import compute_expected_response
+from app.engine.elo import compute_expected_response, compute_expected_response_time
 from app.extensions import db
 from app.models import TaskRun, Question, Task, User
 from app.models.Task import TaskRunQuestion
@@ -29,19 +30,21 @@ def generate_game(task: Task, user: User) -> TaskRun:
     number_of_questions_load = NUMBER_OF_QUESTIONS_FIRST if skill is None else NUMBER_OF_QUESTIONS
     # use global skill if local skill does not exist
     skill_value = user.skill_value if skill is None else skill.value
+    speed_value = skill.speed
 
-    taskrun.questions = choose_questions(task, user, number_of_questions_load, skill_value)
+    taskrun.questions = choose_questions(task, user, number_of_questions_load, skill_value, speed_value)
     db.session.add(taskrun)
     db.session.commit()
     return taskrun
 
 
-def choose_questions(task: Task, user: User, number: int, skill: float) -> [TaskRunQuestion]:
+def choose_questions(task: Task, user: User, number: int, skill: float, speed: float) -> [TaskRunQuestion]:
     """
     :param task: task for which to choose questions
     :param user: user for which to choose questions
     :param number: number of questions to choose
     :param skill: skill of the user for the current task
+    :param speed: speed of the user for the current task
     :return: list of questions
     """
 
@@ -61,7 +64,7 @@ def choose_questions(task: Task, user: User, number: int, skill: float) -> [Task
     for i in range(0, number):
         random.shuffle(questions)
         questions.sort(key=lambda k: question_priority(k, user, choosen_types_counts, answered_counts,
-                                                       last_answer_dates, skill), reverse=True)
+                                                       last_answer_dates, skill, speed), reverse=True)
 
         if len(questions) > 0:
             choosen_questions.append(TaskRunQuestion(question=questions[0], position=i))
@@ -72,7 +75,7 @@ def choose_questions(task: Task, user: User, number: int, skill: float) -> [Task
 
 
 def question_priority(question: Question, user: User, choosen_types_counts: {}, answered_counts: {},
-                      last_answer_dates: {}, skill_value: float) -> float:
+                      last_answer_dates: {}, skill_value: float, user_speed: float) -> float:
     # a hack to keep order of questions consistent when using testing task
     if question.tasks[0].identifier == "test":
         return question.id
@@ -96,7 +99,8 @@ def question_priority(question: Question, user: User, choosen_types_counts: {}, 
         time_score = 0
 
     # score for probability of correct answer
-    expected_response = compute_expected_response(skill_value, question.difficulty)
+    expected_time = compute_expected_response_time(user_speed, question.target_time)
+    expected_response = compute_expected_response(skill_value, question.difficulty, expected_time)
     if RESPONSE_GOAL > expected_response:
         probability_score = expected_response / RESPONSE_GOAL
     else:

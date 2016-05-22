@@ -10,6 +10,13 @@ def compute_expected_response(user_skill: float, difficulty: float, response_tim
     return 1. / (1 + math.exp(difficulty - math.log(response_time) - user_skill))
 
 
+def compute_expected_response_time(user_speed: float, question_speed) -> float:
+    if user_speed == 0:
+        return 0
+    else:
+        return math.exp(question_speed - user_speed)
+
+
 def compute_user_skill_delta(response: float, expected_response: float) -> float:
     K_SUCCESS = 3.4
     K_FAILURE = 0.4
@@ -58,6 +65,10 @@ def update(question_run: TaskRunQuestion):
     user_skill_delta = compute_user_skill_delta(response, expected_response)
     user_skill.value += user_skill_delta
     print("respose:", response, "expected response:", expected_response, "skill delta:", user_skill_delta)
+
+    # user speed
+    user_speed_delta = compute_target_time_delta(question_run.time, user_skill.speed, 1)
+    user_skill.speed += user_speed_delta
 
     # global user skill
     expected_response_global = compute_expected_response(question_run.taskrun.user.skill_value, question_run.question.difficulty, question_run.time)

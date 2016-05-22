@@ -27,11 +27,13 @@ class UserSkill(db.Model):
     def __init__(self, **kwargs):
         if 'value' not in kwargs:
             kwargs['value'] = self.__table__.c.value.default.arg
+            kwargs['speed'] = self.__table__.c.speed.default.arg
         super(UserSkill, self).__init__(**kwargs)
 
     task_id = Column(Integer, ForeignKey('task.id'), primary_key=True)
     user_id = Column(Integer, ForeignKey('user.id'), primary_key=True)
     value = Column(Float, default=0)
+    speed = Column(Float, default=0)
 
     task = relationship('Task')
     user = relationship('User')
