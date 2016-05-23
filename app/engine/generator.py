@@ -28,8 +28,7 @@ def generate_game(task: Task, user: User) -> TaskRun:
 
     skill = taskrun.corresponding_skill(create_if_none=False)
     number_of_questions_load = NUMBER_OF_QUESTIONS_FIRST if skill is None else NUMBER_OF_QUESTIONS
-    # use global skill if local skill does not exist
-    skill_value = user.skill_value if skill is None else skill.value
+    skill_value = 0 if skill is None else skill.value
     speed_value = skill.speed
 
     taskrun.questions = choose_questions(task, user, number_of_questions_load, skill_value, speed_value)
@@ -100,7 +99,7 @@ def question_priority(question: Question, user: User, choosen_types_counts: {}, 
 
     # score for probability of correct answer
     expected_time = compute_expected_response_time(user_speed, question.target_time)
-    expected_response = compute_expected_response(skill_value, question.difficulty, expected_time)
+    expected_response = compute_expected_response(skill_value, question.difficulty)
     if RESPONSE_GOAL > expected_response:
         probability_score = expected_response / RESPONSE_GOAL
     else:
