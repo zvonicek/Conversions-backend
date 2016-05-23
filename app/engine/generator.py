@@ -29,7 +29,7 @@ def generate_game(task: Task, user: User) -> TaskRun:
     skill = taskrun.corresponding_skill(create_if_none=False)
     number_of_questions_load = NUMBER_OF_QUESTIONS_FIRST if skill is None else NUMBER_OF_QUESTIONS
     skill_value = 0 if skill is None else skill.value
-    speed_value = skill.speed
+    speed_value = 0 if skill is None else skill.speed
 
     taskrun.questions = choose_questions(task, user, number_of_questions_load, skill_value, speed_value)
     db.session.add(taskrun)
