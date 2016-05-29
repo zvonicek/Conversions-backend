@@ -39,6 +39,7 @@ def generate_game(task: Task, user: User) -> TaskRun:
 
 def choose_questions(task: Task, user: User, number: int, skill: float, speed: float) -> [TaskRunQuestion]:
     """
+    Choose questions to newly created TaskRun
     :param task: task for which to choose questions
     :param user: user for which to choose questions
     :param number: number of questions to choose
@@ -75,6 +76,18 @@ def choose_questions(task: Task, user: User, number: int, skill: float, speed: f
 
 def question_priority(question: Question, user: User, choosen_types_counts: {}, answered_counts: {},
                       last_answer_dates: {}, skill_value: float, user_speed: float) -> float:
+    """
+    Returns a question priority for the specified parameters
+    :param question: question to compute priority for
+    :param user: user to compute priority for
+    :param choosen_types_counts: types already chosen in the generated task run
+    :param answered_counts: answered counts of specific questions
+    :param last_answer_dates: last answered dates of specific questions
+    :param skill_value: skill of the user aplicable for the question
+    :param user_speed: speed of the user aplicable for the question
+    :return: priority of the question
+    """
+
     # a hack to keep order of questions consistent when using testing task
     if question.tasks[0].identifier == "test":
         return question.id
@@ -109,6 +122,13 @@ def question_priority(question: Question, user: User, choosen_types_counts: {}, 
 
 
 def fetch_questions_stats(questions: List[Question], user: User):
+    """
+    Fetch statistical information about questions for an user
+    :param questions: questions to fetch statistics about
+    :param user: user to fetch statistics for
+    :return: tuple with answered counts and last answered dates
+    """
+
     answered_counts_rows = db.session.execute(text('SELECT question.id, count(question.id) AS count FROM question '
                                                    'JOIN taskrun_question ON taskrun_question.question_id = question.id '
                                                    'JOIN taskrun ON taskrun_question.taskrun_id = taskrun.id '
