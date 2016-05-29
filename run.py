@@ -4,7 +4,7 @@ from sqlalchemy.sql.ddl import DropConstraint
 
 from app.app import create_app
 from app.config import config
-from app.engine.currency import fetch_currency_rates
+from app.engine import elo
 from app.extensions import db
 from app.models import *
 
@@ -87,12 +87,19 @@ def initdb():
 
 
 @manager.command
-def currency():
-    #  we need to set trigger to fetch_currency_rates
-    exchange_rates = fetch_currency_rates(config)
+def compute(response, user_skill, difficulty, time, count_res):
+    response = float(response)
+    user_skill = float(user_skill)
+    difficulty = float(difficulty)
+    time = float(time)
+    count_res = float(count_res)
 
-    for currency, rate in list(exchange_rates.items()):
-        print('1 EUR = {0} {1}'.format(rate, currency))
+    expected_response = elo.compute_expected_response(user_skill, difficulty, time)
+    user_skill_delta = elo.compute_user_skill_delta(response, expected_response)
+    question_difficulty_delta = elo.compute_difficulty_delta(response, expected_response, count_res)
+
+    print("respose:", response, "expected response:", expected_response, "skill delta:", user_skill_delta, "difficulty delta:", question_difficulty_delta)
+
 
 
 manager.add_option('-c', '--config',

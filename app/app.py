@@ -48,6 +48,7 @@ def configure_app(app, cfg=None):
 
 def configure_extensions(app):
     # flask-sqlalchemy
+    # app.config.setdefault('SQLALCHEMY_ECHO', True)
     db.init_app(app)
 
     app.logger.addHandler(logging.StreamHandler())
