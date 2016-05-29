@@ -69,6 +69,7 @@ def choose_questions(task: Task, user: User, number: int, skill: float, speed: f
         if len(questions) > 0:
             choosen_questions.append(TaskRunQuestion(question=questions[0], position=i))
             choosen_types_counts[questions[0].type] = choosen_types_counts.get(questions[0].type, 0) + 1
+            answered_counts[questions[0].id] = answered_counts.get(questions[0].id, 0) + 1
             questions = questions[1:]
 
     return choosen_questions
