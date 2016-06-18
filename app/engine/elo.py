@@ -12,7 +12,7 @@ def compute_expected_response(user_skill: float, difficulty: float, response_tim
 
 def compute_expected_response_time(user_speed: float, question_speed) -> float:
     if user_speed == 0:
-        return 0
+        return 1
     else:
         return math.exp(question_speed - user_speed)
 
