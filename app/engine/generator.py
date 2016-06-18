@@ -113,10 +113,7 @@ def question_priority(question: Question, user: User, choosen_types_counts: {}, 
 
     # score for probability of correct answer
     expected_time = compute_expected_response_time(user_speed, question.target_time)
-    print("Question", question.id, "Expected time", expected_time, "Normal expected",
-          compute_expected_response(skill_value, question.difficulty), "Updated expected",
-          compute_expected_response(skill_value, question.difficulty, expected_time))
-    expected_response = compute_expected_response(skill_value, question.difficulty, expected_time)
+    expected_response = compute_expected_response(skill_value, question.difficulty)
     if RESPONSE_GOAL > expected_response:
         probability_score = expected_response / RESPONSE_GOAL
     else:
