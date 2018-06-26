@@ -123,16 +123,16 @@ def fetch_currency_rates(config):
     currencies = {}
     rates = {}
 
-    with open(os.path.join(os.path.dirname(__file__),
-                           'currencies.tsv'), 'rt') as fp:
-        reader = csv.reader(fp, delimiter='\t')
-        for sym, name in reader:
-            currencies[sym] = name
+    # with open(os.path.join(os.path.dirname(__file__),
+    #                        'currencies.tsv'), 'rt') as fp:
+    #     reader = csv.reader(fp, delimiter='\t')
+    #     for sym, name in reader:
+    #         currencies[sym] = name
 
-    for symbols in grouper(config.SYMBOLS_PER_REQUEST, currencies.keys()):
-        symbols = [s for s in symbols if s]
-        d = load_yahoo_rates(symbols, config)
-        rates.update(d)
+    # for symbols in grouper(config.SYMBOLS_PER_REQUEST, currencies.keys()):
+    #     symbols = [s for s in symbols if s]
+    #     d = load_yahoo_rates(symbols, config)
+    #     rates.update(d)
 
     return rates
 
