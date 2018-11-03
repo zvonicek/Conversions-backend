@@ -111,7 +111,10 @@ def format_quantity_unit(unit, plural=False):
 
     unit_string = outputs.get('{:C}'.format(unit), '{:P}'.format(unit))
     if plural and unit != "degC" and unit != "degF" and "[currency]" not in list(unit.dimensionality):
-        unit_string = inflection.pluralize(unit_string)
+        if unit_string == "foot":
+          unit_string = "feet"
+        else:
+          unit_string = inflection.pluralize(unit_string)
 
     return unit_string
 
